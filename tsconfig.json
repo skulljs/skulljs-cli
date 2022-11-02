@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": false,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "build",
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["ES2020", "DOM"],
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@utils/*": ["src/utils/*"]
+    }
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

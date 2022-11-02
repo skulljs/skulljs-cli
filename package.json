@@ -1,0 +1,59 @@
+{
+  "name": "skulljs-cli",
+  "version": "1.0.0",
+  "description": "CLI of skulljs",
+  "type": "module",
+  "bin": {
+    "sk": "bin/sk.js"
+  },
+  "scripts": {
+    "format": "prettier --write **/*.{js,json} && standard --fix",
+    "clean-build": "del-cli --force ./build",
+    "copy-templates": "node -e \"const fs = require('fs'); const data = fs.cpSync('./src/templates/','./build/templates/',{recursive : true});\"",
+    "compile": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "build": "npm run clean-build && npm run compile && npm run copy-templates",
+    "lint": "standard",
+    "test": "jest __tests__",
+    "watch": "jest --watch",
+    "snapupdate": "jest --updateSnapshot",
+    "coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skulljs/skulljs-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/skulljs/skulljs-cli/issues"
+  },
+  "homepage": "https://github.com/skulljs/skulljs-cli#readme",
+  "dependencies": {
+    "commander": "^9.4.1",
+    "cross-spawn": "^7.0.3",
+    "ejs": "^3.1.8",
+    "execa": "^6.1.0",
+    "fs-jetpack": "^5.1.0",
+    "lodash": "^4.17.21",
+    "ora": "^6.1.2",
+    "pluralize": "^8.0.0",
+    "prompts": "^2.4.2",
+    "simple-git": "^3.14.1",
+    "typescript": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.2",
+    "@types/ejs": "^3.1.1",
+    "@types/lodash": "^4.14.187",
+    "@types/node": "^18.11.9",
+    "@types/pluralize": "^0.0.29",
+    "@types/prompts": "^2.4.1",
+    "del-cli": "^5.0.0",
+    "jest": "^29.2.2",
+    "prettier": "^2.7.1",
+    "standard": "^17.0.0",
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.7.0"
+  }
+}
