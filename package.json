@@ -1,6 +1,6 @@
 {
-  "name": "skulljs-cli",
-  "version": "1.0.0",
+  "name": "@skulljs/cli",
+  "version": "0.9.2",
   "description": "CLI of skulljs",
   "type": "module",
   "bin": {
@@ -18,13 +18,20 @@
     "snapupdate": "jest --updateSnapshot",
     "coverage": "jest --coverage"
   },
+  "files": [
+    "bin",
+    "build",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/skulljs/skulljs-cli.git"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/skulljs/skulljs-cli/issues"
   },
