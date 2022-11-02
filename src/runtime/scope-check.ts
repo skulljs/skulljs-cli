@@ -14,7 +14,7 @@ function scopeCheck(toolbox: Toolbox, command: Command) {
     path,
   } = toolbox;
 
-  // Check if current directory is in a kestrel-cli project
+  // Check if current directory is in a skulljs-cli project
 
   const project_def = lookUpDef(process.cwd());
   toolbox.project.project_def = project_def as string;

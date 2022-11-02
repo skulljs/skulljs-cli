@@ -6,10 +6,12 @@ export interface cliFile {
     backend?: {
       path: string;
       skulljs_repository: string;
+      version: string;
     };
     frontend?: {
       path: string;
       skulljs_repository: string;
+      version: string;
     };
   };
   cli_version: string;

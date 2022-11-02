@@ -1,8 +1,6 @@
 import { Command } from '@src/types/command';
+import repositories from '@src/assets/repositories.js';
 import { NewProps } from '@src/types/commands/new';
-import back_files from '@src/assets/back_files.js';
-import front_files from '@src/assets/front_files.js';
-import main_files from '@src/assets/main_files.js';
 import simpleGit from 'simple-git';
 import url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -32,7 +30,7 @@ const newCommand: Command = {
   run: async (toolbox, options, args, command) => {
     const {
       system: { run },
-      fileSystem: { exists, removeAsync, cwd },
+      fileSystem: { exists, removeAsync, cwd, readAsync },
       print: { infoLoader, error, warn },
       saveLog: { generate, copy },
       exit,
@@ -53,33 +51,20 @@ const newCommand: Command = {
     const props: NewProps = {
       name: projectName,
       backend_path: 'backend',
+      backend_repository: '',
+      backend_version: '',
       frontend_path: 'frontend',
-      kc_version: version,
+      frontend_repository: '',
+      frontend_version: '',
+      sk_version: version,
     };
 
-    let toCreate = '';
-    let templateFiles = [back_files, front_files, main_files];
-    if (single) {
-      if (front) {
-        toCreate = 'frontend';
-        templateFiles = [front_files, main_files];
-        props.frontend_path = '';
-        props.backend_path = null;
-      }
-      if (back) {
-        toCreate = 'backend';
-        templateFiles = [back_files, main_files];
-        props.frontend_path = null;
-        props.backend_path = '';
-      }
-    }
-
     if (!props.name || props.name.length === 0) {
-      const errorMsg = ['You must provide a valid project name.', 'Example: kc new my-project'];
+      const errorMsg = ['You must provide a valid project name.', 'Example: sk new my-project'];
       exit(command, errorMsg);
     } else if (!/^[a-z0-9-_]+$/.test(props.name)) {
       const validName = kebabCase(props.name);
-      const errorMsg = [`${props.name} is not a valid name. Use lower case, dashes and underscore only.`, `Suggested: kc new ${validName}`];
+      const errorMsg = [`${props.name} is not a valid name. Use lower case, dashes and underscore only.`, `Suggested: sk new ${validName}`];
       exit(command, errorMsg);
     }
 
@@ -94,54 +79,149 @@ const newCommand: Command = {
       await toolbox.loader.succeed();
     }
 
-    // get NGX-TEMPLATE from github repository
-    const downloadTemplate = () => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          if (exists(path.join(__dirname, '../templates/angular-node'))) {
-            await removeAsync(path.join(__dirname, '../templates/angular-node'));
+    if (single) {
+      if (front) {
+        props.frontend_path = '';
+        props.backend_path = null;
+      }
+      if (back) {
+        props.frontend_path = null;
+        props.backend_path = '';
+      }
+    }
+
+    // get repositories list
+
+    const frontend_repositories: string[] = [];
+    const backend_repositories: string[] = [];
+    repositories.frontend_repositories.forEach((repo) => {
+      frontend_repositories.push(repo.name);
+    });
+    repositories.backend_repositories.forEach((repo) => {
+      backend_repositories.push(repo.name);
+    });
+
+    // choose repository
+
+    let frontend_repo_res: string = '';
+    let backend_repo_res: string = '';
+    if (single) {
+      if (front) {
+        frontend_repo_res = await prompts.select('Select the frontend repository', frontend_repositories, undefined, true);
+      }
+      if (back) {
+        backend_repo_res = await prompts.select('Select the backend repository', backend_repositories, undefined, true);
+      }
+    } else {
+      frontend_repo_res = await prompts.select('Select the frontend repository', frontend_repositories, undefined, true);
+      backend_repo_res = await prompts.select('Select the backend repository', backend_repositories, undefined, true);
+    }
+
+    const frontend_repo_selected = repositories.frontend_repositories.filter((repo) => (repo.name = frontend_repo_res))[0];
+    const backend_repo_selected = repositories.backend_repositories.filter((repo) => (repo.name = backend_repo_res))[0];
+
+    // get repositories
+
+    const frontend_repo_dir = path.join(__dirname, '../templates/frontend_repo');
+    const backend_repo_dir = path.join(__dirname, '../templates/backend_repo');
+
+    if (frontend_repo_selected) {
+      props.frontend_repository = frontend_repo_selected.name;
+      const downloadFrontendRepository = () => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            if (exists(frontend_repo_dir)) {
+              await removeAsync(frontend_repo_dir);
+            }
+            await simpleGit().clone(frontend_repo_selected.url, frontend_repo_dir, {});
+            resolve(true);
+          } catch (err) {
+            await toolbox.loader.fail();
+            error(`The download of the repository list has failed. : ${err}`);
+            resolve(false);
           }
-          await simpleGit().clone('https://github.com/kestrel-org/kestrel.git', `${__dirname}/../templates/angular-node`, {});
-          await run('node', `${__dirname}/../utils/convertToTemplate.js`);
-          resolve(true);
-        } catch (err) {
-          await toolbox.loader.fail();
-          error(`The download of the github repository has failed. : ${err}`);
-          resolve(false);
-        }
+        });
+      };
+
+      toolbox.loader.start(infoLoader(`Retrieve frontend repository from Git: ${frontend_repo_selected.name}`));
+      const isFrontendRepoDownloaded = await downloadFrontendRepository();
+      if (!isFrontendRepoDownloaded) exit(command, ['Unable to get the frontend repository.', `Url: ${frontend_repo_selected.url}`]);
+      const frontend_package: any = await readAsync(path.join(frontend_repo_dir, 'package.json'));
+      props.frontend_version = JSON.parse(frontend_package).version;
+      await toolbox.loader.succeed();
+    }
+
+    if (backend_repo_selected) {
+      props.backend_repository = backend_repo_selected.name;
+      const downloadBackendRepository = () => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            if (exists(backend_repo_dir)) {
+              await removeAsync(backend_repo_dir);
+            }
+            await simpleGit().clone(backend_repo_selected.url, backend_repo_dir, {});
+            resolve(true);
+          } catch (err) {
+            await toolbox.loader.fail();
+            error(`The download of the repository list has failed. : ${err}`);
+            resolve(false);
+          }
+        });
+      };
+
+      toolbox.loader.start(infoLoader(`Retrieve backend repository from Git: ${backend_repo_selected.name}`));
+      const isBackendRepoDownloaded = await downloadBackendRepository();
+      if (!isBackendRepoDownloaded) exit(command, ['Unable to get the backend repository.', `Url: ${backend_repo_selected.url}`]);
+      const backend_package: any = await readAsync(path.join(backend_repo_dir, 'package.json'));
+      props.backend_version = JSON.parse(backend_package).version;
+      await toolbox.loader.succeed();
+    }
+
+    // copy repositories into project folder
+
+    toolbox.loader.start(infoLoader('Copying selected repositories into project folder'));
+
+    if (frontend_repo_selected) {
+      await copy({
+        from: frontend_repo_dir,
+        target: `${props.name}/${props.frontend_path}`,
+        options: {
+          overwrite: true,
+          matching: frontend_repo_selected.matching_string_copy,
+        },
       });
-    };
+    }
 
-    toolbox.loader.start(infoLoader('Downloading template'));
+    if (backend_repo_selected) {
+      await copy({
+        from: backend_repo_dir,
+        target: `${props.name}/${props.backend_path}`,
+        options: {
+          overwrite: true,
+          matching: backend_repo_selected.matching_string_copy,
+        },
+      });
+    }
 
-    const isDownloaded = await downloadTemplate();
-    if (!isDownloaded) process.exit(0);
-    await toolbox.loader.succeed();
-
-    toolbox.loader.start(infoLoader('Copying directory'));
+    // Copy root files
     await copy({
-      from: `${__dirname}/../templates/angular-node/${toCreate}`,
+      from: path.join(__dirname, '../templates/new/files'),
       target: props.name,
       options: {
         overwrite: true,
-        matching: ['./!(.github|.git|ROADMAP.md|CHANGELOG.md|.mergify.yml|README.md|*.ejs)', './!(.github|.git)/**/!(*.ejs)'],
       },
     });
+
     await toolbox.loader.succeed();
 
-    let generators: Promise<string>[] = [];
-    toolbox.loader.start(infoLoader('Generating templates'));
-    for (let files of templateFiles) {
-      generators = files.toTransform.reduce((res, file) => {
-        const generator = generate({
-          template: `${file.path + file.filename}.ejs`,
-          target: `${props.name}/${(single ? file.createPath : file.part) + file.filename.replace('.ejs', '')}`,
-          props: props,
-        });
-        return res.concat(generator);
-      }, generators);
-    }
-    await Promise.all(generators);
+    // Create skulljs-cli.json
+
+    toolbox.loader.start(infoLoader('Generating skulljs-cli.json'));
+    await generate({
+      template: 'new/skulljs-cli.json.ejs',
+      target: `${props.name}/${'skulljs-cli.json.ejs'.replace('.ejs', '')}`,
+      props: props,
+    });
     await toolbox.loader.succeed();
 
     // Install dependecies
