@@ -1,4 +1,4 @@
-# [skulljs] [0.9.2] skulljs-cli
+# [skulljs] [0.9.5] skulljs-cli
 
 CLI of skulljs
 

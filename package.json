@@ -1,6 +1,6 @@
 {
   "name": "@skulljs/cli",
-  "version": "0.9.2",
+  "version": "0.9.5",
   "description": "CLI of skulljs",
   "type": "module",
   "bin": {
@@ -16,7 +16,8 @@
     "test": "jest __tests__",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "publish": "npm publish --access public"
   },
   "files": [
     "bin",

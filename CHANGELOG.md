@@ -1,8 +1,9 @@
 # Changelog
 
-## v0.9.2 - sk new
+## v0.9.5 - sk new
 
 - Add sk new
+- Fix npm version
 
 ## v0.9.1 - Toolbox + Structure
 
