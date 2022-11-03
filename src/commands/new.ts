@@ -137,7 +137,7 @@ const newCommand: Command = {
             resolve(true);
           } catch (err) {
             await toolbox.loader.fail();
-            error(`The download of the repository list has failed. : ${err}`);
+            error(`The download of the frontend repository has failed. : ${err}`);
             resolve(false);
           }
         });
@@ -163,7 +163,7 @@ const newCommand: Command = {
             resolve(true);
           } catch (err) {
             await toolbox.loader.fail();
-            error(`The download of the repository list has failed. : ${err}`);
+            error(`The download of the backend repository has failed. : ${err}`);
             resolve(false);
           }
         });

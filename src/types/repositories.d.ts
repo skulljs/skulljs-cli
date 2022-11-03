@@ -1,4 +1,4 @@
-interface Repository {
+export interface Repository {
   name: string;
   url: string;
   matching_string_copy: string[] | string | undefined;

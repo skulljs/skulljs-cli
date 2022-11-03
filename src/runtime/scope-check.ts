@@ -1,6 +1,7 @@
 import { Command } from '@src/types/command';
 import lookUpDef from '@utils/findProjectDef.js';
 import { Toolbox } from '@src/toolbox/toolbox.js';
+import isInRepositoriesList from '@src/utils/isInRepositoriesList.js';
 
 /**
  * Check if command is run in the correct scope
@@ -33,29 +34,53 @@ function scopeCheck(toolbox: Toolbox, command: Command) {
 
     if (command.needs && command.needs.length <= 2) {
       for (let need of command.needs) {
-        if (!def_content.projects.hasOwnProperty(`${need}_path`)) {
+        if (!def_content.projects.hasOwnProperty(`${need}`)) {
           error(`Missing a ${need} project !`);
           return process.exit(0);
         }
       }
     }
 
-    if (def_content.projects.hasOwnProperty('backend_path')) {
-      if (!isDirectory(path.join(root_dir, def_content.projects.backend_path))) {
-        error(`Cannot find directory '${def_content.projects.backend_path}', did you change its name, if so update it in the skulljs-cli.json file`);
-        return process.exit(0);
+    if (def_content.projects.hasOwnProperty('backend')) {
+      if (def_content.projects.backend.hasOwnProperty('path')) {
+        if (!isDirectory(path.join(root_dir, def_content.projects.backend.path))) {
+          error(`Cannot find directory '${def_content.projects.backend.path}', did you change its name, if so update it in the skulljs-cli.json file`);
+          return process.exit(0);
+        }
       }
-      const backend_path = path.join(root_dir, def_content.projects.backend_path);
-      toolbox.project.backend_path = backend_path;
+      if (def_content.projects.backend.hasOwnProperty('skulljs_repository')) {
+        if (!isInRepositoriesList(def_content.projects.backend.skulljs_repository, 'backend')) {
+          error(`Cannot find repository '${def_content.projects.backend.skulljs_repository}' in repositories list, check the skulljs-cli.json file`);
+          return process.exit(0);
+        }
+      }
+      const backend_path = path.join(root_dir, def_content.projects.backend.path);
+      toolbox.project.backend = {
+        path: backend_path,
+        skulljs_repository: def_content.projects.backend.skulljs_repository,
+        version: def_content.projects.backend.version,
+      };
     }
 
-    if (def_content.projects.hasOwnProperty('frontend_path')) {
-      if (!isDirectory(path.join(root_dir, def_content.projects.frontend_path))) {
-        error(`Cannot find directory '${def_content.projects.frontend_path}', did you change its name, if so update it in the skulljs-cli.json file`);
-        return process.exit(0);
+    if (def_content.projects.hasOwnProperty('frontend')) {
+      if (def_content.projects.frontend.hasOwnProperty('path')) {
+        if (!isDirectory(path.join(root_dir, def_content.projects.frontend.path))) {
+          error(`Cannot find directory '${def_content.projects.frontend.path}', did you change its name, if so update it in the skulljs-cli.json file`);
+          return process.exit(0);
+        }
       }
-      const frontend_path = path.join(root_dir, def_content.projects.frontend_path);
-      toolbox.project.frontend_path = frontend_path;
+      if (def_content.projects.frontend.hasOwnProperty('skulljs_repository')) {
+        if (!isInRepositoriesList(def_content.projects.frontend.skulljs_repository, 'frontend')) {
+          error(`Cannot find repository '${def_content.projects.frontend.skulljs_repository}' in repositories list, check the skulljs-cli.json file`);
+          return process.exit(0);
+        }
+      }
+      const frontend_path = path.join(root_dir, def_content.projects.frontend.path);
+      toolbox.project.frontend = {
+        path: frontend_path,
+        skulljs_repository: def_content.projects.frontend.skulljs_repository,
+        version: def_content.projects.frontend.version,
+      };
     }
   }
   if (command.scope == 'out') {

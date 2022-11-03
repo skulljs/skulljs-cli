@@ -1,6 +1,6 @@
 {
   "name": "@skulljs/cli",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "CLI of skulljs",
   "type": "module",
   "bin": {
@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/skulljs/skulljs-cli#readme",
   "dependencies": {
+    "@loancrate/prisma-schema-parser": "^2.0.0",
     "chalk": "^5.1.2",
     "chokidar": "^3.5.3",
     "commander": "^9.4.1",

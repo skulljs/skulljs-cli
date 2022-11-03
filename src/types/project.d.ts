@@ -16,6 +16,13 @@ export interface cliFile {
   };
   cli_version: string;
 }
+
+export interface Repository {
+  path: string;
+  skulljs_repository: string;
+  version: string;
+}
+
 /**
  * Contains all project related paths and data
  */
@@ -29,13 +36,13 @@ export default interface Project {
    */
   def_content?: cliFile;
   /**
-   * Path to the backend if it exist
+   * backend if it exist
    */
-  backend_path?: string;
+  backend?: Repository;
   /**
-   * Path to the frontend if it exist
+   * frontend if it exist
    */
-  frontend_path?: string;
+  frontend?: Repository;
 }
 
 export interface ProjectUse {
@@ -45,11 +52,11 @@ export interface ProjectUse {
    */
   def_content: cliFile;
   /**
-   * Path to the backend if it exist
+   * backend if it exist
    */
-  backend_path: string;
+  backend: Repository;
   /**
-   * Path to the frontend if it exist
+   * frontend if it exist
    */
-  frontend_path: string;
+  frontend: Repository;
 }
