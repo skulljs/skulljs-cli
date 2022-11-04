@@ -16,8 +16,7 @@
     "test": "jest __tests__",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
-    "coverage": "jest --coverage",
-    "publish": "npm publish --access public"
+    "coverage": "jest --coverage"
   },
   "files": [
     "bin",
