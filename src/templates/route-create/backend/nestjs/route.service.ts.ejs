@@ -6,4 +6,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 @Injectable()
-export class <%= props.model_name_pUcfirst %>Service {}
+export class <%= props.route_name_pUcfirst %>Service {
+<%- props.backend_crud_data.service %>
+}

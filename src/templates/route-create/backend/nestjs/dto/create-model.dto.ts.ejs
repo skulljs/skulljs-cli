@@ -1,0 +1,8 @@
+import { <%= props.model.model_class_validator %> } from 'class-validator';
+
+export class Create<%= props.model_name_sUcfirst %>Dto {
+<% props.model.properties.forEach(function(property){ %>
+  <%= property.property_class_validator %>
+  readonly <%= property.property_name %>: <%= property.property_type %>;
+<% }); %>
+}

@@ -29,7 +29,7 @@ function getNestJsBackendVariables(backend: Repository, route_path: string): Bac
 }
 
 export function getFrontendVariables(frontend: Repository, backend_route_folder: string): FrontendVariables {
-  let frontend_variables: FrontendVariables = { frontend_service_name: '', frontend_src_folder: '', frontend_services_folder: '', frontend_service_path: '' };
+  let frontend_variables: FrontendVariables = { frontend_service_name: '', frontend_src_folder: '', frontend_services_folder: '', frontend_service_folder: '' };
   switch (frontend.skulljs_repository) {
     case 'angular':
       frontend_variables = getAngularFrontendVariables(frontend, backend_route_folder);
@@ -47,9 +47,9 @@ function getAngularFrontendVariables(frontend: Repository, backend_route_folder:
   const frontend_service_name = path.basename(backend_route_folder);
   const frontend_src_folder = path.join(frontend?.path || '', 'src');
   const frontend_services_folder = path.join(frontend_src_folder, 'app/services');
-  const frontend_service_path = path.join(frontend_services_folder, frontend_service_name, frontend_service_name);
+  const frontend_service_folder = path.join(frontend_services_folder, frontend_service_name);
 
-  return { frontend_service_name, frontend_src_folder, frontend_services_folder, frontend_service_path };
+  return { frontend_service_name, frontend_src_folder, frontend_services_folder, frontend_service_folder };
 }
 
 export default {

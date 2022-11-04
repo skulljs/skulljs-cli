@@ -1,10 +1,10 @@
 import { Command } from '@src/types/command';
-import { ProjectUse } from '@src/types/project';
-import { FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-create';
+import { ProjectUse, Repository } from '@src/types/project';
+import { FileToGenerate, FrontendVariables, GenerateProps, PromptsModels } from '@src/types/commands/route-create';
 import { getAllModels, getModel } from '@src/assets/route-create/databaseUtils.js';
-import { getBackendFilesToGenerates } from '@src/assets/route-create/generateUtils.js';
+import { getBackendFilesToGenerates, getBackendCRUDData, getFrontendCRUDData, getFrontendFilesToGenerates } from '@src/assets/route-create/generateUtils.js';
 import { getBackendVariables, getFrontendVariables } from '@src/assets/route-create/variablesUtils.js';
-import { property } from 'lodash';
+import { postGenerationBackendScript, postGenerationFrontendScript } from '@src/assets/route-create/postGenerationUtils.js';
 
 const routeCommand: Command = {
   name: 'route:create',
@@ -42,15 +42,15 @@ const routeCommand: Command = {
 
     // Check route name
 
-    const pattern = /^([-_A-z]+\/)*[-_A-z]{3,}$/g;
+    const pattern = /^[A-z]{3,}$/g;
 
     function isFilePath(path: string, isArgs: boolean): boolean {
       let is_file_path = pattern.test(path);
       if (!is_file_path) {
         const errorMsg = [
-          `${route_path} is not a valid name. Use letters case, slashes, dashes and underscore only.`,
+          `${route_path} is not a valid name. Use letters case and underscore only.`,
           'The name should also be more than 3 caracters long.',
-          `Example: sk route:create example/my-route`,
+          `Example: sk route:create dogs`,
         ];
         if (isArgs) {
           exit(command, errorMsg);
@@ -88,14 +88,7 @@ const routeCommand: Command = {
       exit(command, ['Unable to locate models file.', `Path: ${backend_variables.database_models_file}`]);
     }
 
-    let models: PromptsModels[] = [
-      {
-        title: 'None',
-        value: false,
-      },
-    ];
-
-    models = models.concat(getAllModels(backend.skulljs_repository, backend_variables.database_models_file));
+    const models: PromptsModels[] = getAllModels(backend.skulljs_repository, backend_variables.database_models_file);
 
     // ask user
 
@@ -126,8 +119,8 @@ const routeCommand: Command = {
     const crud = await prompts.multiSelect('CRUD', crud_choices);
     const createService = !service || !frontend ? false : await prompts.confirm('Create the associate service ?', true);
 
-    // add backend files
-    toolbox.loader.start(infoLoader('Generating backend files'));
+    // add files
+    toolbox.loader.start(infoLoader('Generating files'));
     if (exists(backend_variables.backend_route_folder)) {
       await removeAsync(backend_variables.backend_route_folder);
     }
@@ -144,23 +137,57 @@ const routeCommand: Command = {
 
     const props: GenerateProps = {
       backend_route_folder: backend_variables.backend_route_folder,
-      route_name: route_name,
-      model_name_sLc: lowerCase(singular(route_name)),
-      model_name_sUcfirst: upperFirst(singular(route_name)),
-      model_name_pLc: lowerCase(plural(route_name)),
-      model_name_pUcfirst: upperFirst(plural(route_name)),
+      frontend_service_folder: frontend_variables ? frontend_variables.frontend_service_folder : '',
+      route_name_sLc: lowerCase(singular(route_name)),
+      route_name_sUcfirst: upperFirst(singular(route_name)),
+      route_name_pLc: lowerCase(plural(route_name)),
+      route_name_pUcfirst: upperFirst(plural(route_name)),
+      model_name_sLc: lowerCase(singular(model.model_name)),
+      model_name_sUcfirst: upperFirst(singular(model.model_name)),
+      model_name_pLc: lowerCase(plural(model.model_name)),
+      model_name_pUcfirst: upperFirst(plural(model.model_name)),
+      model_name_Lc: lowerCase(model.model_name),
+      model_name_Ucfirst: upperFirst(model.model_name),
       model_id: model_id,
       model_id_type: model_id_type,
+      crud: crud,
+      backend_crud_data: null,
+      frontend_crud_data: null,
+      model: model,
     };
+    props.backend_crud_data = await getBackendCRUDData(backend.skulljs_repository, props);
 
-    let filesToGenerates: FileToGenerate[] = getBackendFilesToGenerates(backend.skulljs_repository, props);
-    filesToGenerates.forEach((file) => {
+    // backend
+    const backendFilesToGenerates: FileToGenerate[] = getBackendFilesToGenerates(backend.skulljs_repository, props);
+    backendFilesToGenerates.forEach((file) => {
       saveLog.generate({
         template: file.template,
         target: file.target,
         props: props,
       });
     });
+
+    // frontend
+    if (createService) {
+      props.frontend_crud_data = await getFrontendCRUDData((frontend as Repository).skulljs_repository, props);
+      const frontendFilesToGenerates: FileToGenerate[] = getFrontendFilesToGenerates((frontend as Repository).skulljs_repository, props);
+      frontendFilesToGenerates.forEach((file) => {
+        saveLog.generate({
+          template: file.template,
+          target: file.target,
+          props: props,
+        });
+      });
+    }
+
+    await toolbox.loader.succeed();
+
+    // post generation script
+    toolbox.loader.start(infoLoader('Running post generation script'));
+    await postGenerationBackendScript(backend.skulljs_repository, backend_variables, props);
+    if (frontend) {
+      postGenerationFrontendScript(frontend.skulljs_repository, frontend_variables as FrontendVariables, props);
+    }
     await toolbox.loader.succeed();
   },
 };

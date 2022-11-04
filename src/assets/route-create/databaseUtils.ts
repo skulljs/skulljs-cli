@@ -1,6 +1,7 @@
 import toolbox from '@src/toolbox/toolbox.js';
-import { DatabaseModel, PromptsModels } from '@src/types/commands/route-create';
+import { DatabaseModel, DatabaseModelProperty, PromptsModels } from '@src/types/commands/route-create';
 import { parsePrismaSchema } from '@loancrate/prisma-schema-parser';
+import { convertDatabaseTypeToTsType } from './databaseConvert.js';
 
 const {
   command,
@@ -50,7 +51,7 @@ export function getModel(skulljs_repository: string, database_models_file: strin
   let model: DatabaseModel = { model_name: '', properties: [] };
   switch (skulljs_repository) {
     case 'nestjs':
-      model = getPrismaModel(database_models_file, model_name);
+      model = getPrismaModel(skulljs_repository, database_models_file, model_name);
       break;
 
     default:
@@ -60,8 +61,9 @@ export function getModel(skulljs_repository: string, database_models_file: strin
   return model;
 }
 
-function getPrismaModel(database_models_file: string, model_name: string): DatabaseModel {
-  const model: DatabaseModel = { model_name: '', properties: [] };
+function getPrismaModel(skulljs_repository: string, database_models_file: string, model_name: string): DatabaseModel {
+  const model: DatabaseModel = { model_name: '', properties: [], model_class_validator: '' };
+  const class_validator: string[] = [];
   const schema = parsePrismaSchema('' + read(database_models_file));
   schema.declarations.forEach((declaration: any) => {
     if (lowerCase(plural(declaration.name.value)) == lowerCase(plural(model_name))) {
@@ -79,7 +81,16 @@ function getPrismaModel(database_models_file: string, model_name: string): Datab
             }
           });
           if (keep) {
-            model.properties.push({ property_name: property.name.value, property_type: property.type.name.value, is_id });
+            const type = convertDatabaseTypeToTsType(skulljs_repository, property.type.name.value);
+            const property_object: DatabaseModelProperty = {
+              property_name: property.name.value,
+              property_type: type,
+              property_class_validator: type == 'object' ? '@IsJSON()' : `@Is${upperFirst(type)}()`,
+              is_id,
+            };
+            model.properties.push(property_object);
+            const property_class_validator_string = property_object.property_class_validator as string;
+            class_validator.push(property_class_validator_string.substring(1, property_class_validator_string.length - 2));
           }
         } else if (property.type.kind == 'optional') {
           let keep = true;
@@ -89,13 +100,24 @@ function getPrismaModel(database_models_file: string, model_name: string): Datab
             }
           });
           if (keep) {
-            model.properties.push({ property_name: property.name.value, property_type: property.type.type.name.value, is_id: false });
+            const type = convertDatabaseTypeToTsType(skulljs_repository, property.type.type.name.value);
+            const property_object: DatabaseModelProperty = {
+              property_name: property.name.value,
+              property_type: type,
+              property_class_validator: type == 'object' ? '@IsJSON()' : `@Is${upperFirst(type)}()`,
+              is_id: false,
+            };
+            model.properties.push(property_object);
+            const property_class_validator_string = property_object.property_class_validator as string;
+            class_validator.push(property_class_validator_string.substring(1, property_class_validator_string.length - 2));
           }
         }
       });
     }
   });
 
+  // unique
+  model.model_class_validator = [...new Set(class_validator)].join(', ');
   return model;
 }
 

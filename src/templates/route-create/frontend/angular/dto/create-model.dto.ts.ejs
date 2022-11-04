@@ -1,0 +1,3 @@
+export interface Create<%= props.model_name_sUcfirst %>Dto {<% props.model.properties.forEach(function(property){ %>
+  <%= property.property_name %><%= property.is_id ? '?' : '' %>: <%= property.property_type %>; <% }); %>
+}
