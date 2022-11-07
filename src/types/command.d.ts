@@ -1,7 +1,7 @@
-import { Toolbox } from '@src/toolbox/toolbox.js'
-import { Command as Cmd } from 'commander'
+import { Toolbox } from '@src/toolbox/toolbox.js';
+import { Command as Cmd } from 'commander';
 
-type Needs = 'frontend' | 'backend'
+type Needs = 'frontend' | 'backend';
 /**
  * @interface Command - Structure for new and existing command files
  */
@@ -9,69 +9,74 @@ export interface Command {
   /**
    * Name of the command
    */
-  name: string
+  name: string;
   /**
    * Aliases of the command
    */
-  aliases?: readonly string[]
+  aliases?: readonly string[];
   /**
    * If the command handles sigint
    */
-  sigint?: boolean
+  sigint?: boolean;
   /**
    * Description of the command
    */
-  description?: string
+  description?: string;
   /**
    * Scope for the command to be executed in
    */
-  scope?: 'in' | 'out'
+  scope?: 'in' | 'out';
   /**
    * Projects needed for the command to be executed
    */
-  needs?: Needs[]
+  needs?: Needs[];
   /**
    * Folders to wathc to detect new files created or updated
    */
   foldersToWatch?: {
-    frontend?: string[]
-    backend?: string[]
-  }
+    frontend?: string[];
+    backend?: string[];
+  };
+  /**
+   * Ignore commander args and options parsing after command name
+   */
+  parseIgnore?: boolean;
   /**
    * CommandLine options for the command
    */
   options?: Array<{
-    flags: string
-    description?: string
-    choices?: string[]
-    default?: string | boolean
-    conflict?: string | string[]
-  }>
+    flags: string;
+    description?: string;
+    choices?: string[];
+    default?: string | boolean;
+    conflict?: string | string[];
+  }>;
   /**
    * CommandLine arguments for the commands
    */
   arguments?: Array<{
-    name: string
-    description?: string
-    choices?: string[]
-    default?: string | boolean
-    required?: boolean
-  }>
+    name: string;
+    description?: string;
+    choices?: string[];
+    default?: string | boolean;
+    required?: boolean;
+    variadic?: boolean;
+  }>;
   /**
    * Execute the command
    * @param toolbox Toolbox object passed to each command
    * @param options Options passed to the command
    * @param args Arguments passed to the command
    */
-  run(toolbox: Toolbox, options: any, args: any, command: Cmd): void
+  run(toolbox: Toolbox, options: any, args: any, command: Cmd): void;
 }
 /**
  * @interface CommandsObject - Contains all existing commands object
  */
 export interface CommandsObject {
-  [key: string]: Command
+  [key: string]: Command;
 }
 
 export interface Aliases {
-  [key: string]: string
+  [key: string]: string;
 }

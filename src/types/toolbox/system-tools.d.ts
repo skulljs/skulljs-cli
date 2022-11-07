@@ -6,9 +6,9 @@ export interface SkSystem {
    * @param params.commandLine - The command line to execute.
    * @param params.args - The arguments used by the command.
    * @param params.options - Additional child_process options for node.
-   * @returns The response object.
+   * @returns Promise with result.
    */
-  spawn(params: { commandLine: string; args?: string; options?: SpawnOpts }): Promise<SpawnResult>;
+  spawn(params: { commandLine: string; args?: string[]; options?: SpawnOpts }): Promise<SpawnResult>;
 
   /**
    * Executes a commandline via execa.

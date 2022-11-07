@@ -47,5 +47,11 @@ export interface SkStrings {
    * @returns string
    */
   lowerCase(str: string): string;
+  /**
+   * LowerCase first letter of string
+   * @param str
+   * @returns string
+   */
+  lowerFirst(str: string): string;
   kebabCase(string?: string | undefined): string;
 }

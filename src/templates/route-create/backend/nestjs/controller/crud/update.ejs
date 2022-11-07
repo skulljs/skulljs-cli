@@ -1,5 +1,5 @@
   @Patch(':<%= props.model_id %>')
   @ApiOkResponse({ type: <%= props.model_name_sUcfirst %> })
   update(@Param('<%= props.model_id %>') <%= props.model_id %>: <%= props.model_id_type %>, @Body() update<%= props.model_name_sUcfirst %>Dto: Update<%= props.model_name_sUcfirst %>Dto) {
-    return this.<%= props.route_name_pLc %>Service.update(+<%= props.model_id %>, update<%= props.model_name_sUcfirst %>Dto);
+    return this.<%= props.route_name_pLf %>Service.update(+<%= props.model_id %>, update<%= props.model_name_sUcfirst %>Dto);
   }

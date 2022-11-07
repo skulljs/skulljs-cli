@@ -12,6 +12,8 @@ export interface SkFileSystem extends FSJetpack {
    * @returns `true` if the directory exists and is a directory, otherwise `false`.
    */
   isDirectory(path: string): boolean;
-
+  /**
+   * Os file separator
+   */
   separator: string;
 }

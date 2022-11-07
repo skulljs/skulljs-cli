@@ -1,4 +1,4 @@
-import { ParseOptions, Command as program, Option, Argument } from 'commander';
+import { ParseOptions, Command as program, Option, Argument, Command as Cmd } from 'commander';
 import { readdirSync } from 'node:fs';
 import * as url from 'url';
 import path from 'path';
@@ -7,26 +7,50 @@ import toolbox from '@src/toolbox/toolbox.js';
 import scopeExt from '@src/runtime/scope-check.js';
 import errorsHandler from '@src/runtime/exit-handler.js';
 import setCommand from '@src/runtime/set-command.js';
+import '@src/utils/arrayExtensions.js';
+import repositories from './assets/repositories.js';
+import { generateCliCmd } from './assets/forwarding/commandGenerator.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 async function run(argv?: readonly string[] | undefined, options?: ParseOptions | undefined) {
-  const commands: string[] = readdirSync(path.join(__dirname, 'commands'));
-  for (const commandFile of commands) {
-    const command: Command = (await import(`./commands/${commandFile.replace('.ts', '.js')}`)).default;
-    const action = toolbox.cli
-      .command(command.name)
-      .aliases(command.aliases || [])
+  const commandsPath: string[] = readdirSync(path.join(__dirname, 'commands'));
+  const commands = await Promise.all(
+    commandsPath.map(async (path) => {
+      return (await import(`./commands/${path}`)).default as Command;
+    })
+  );
+
+  // Add all cli commands from repositories
+
+  repositories.backend_repositories.forEach((repo) => {
+    if (repo.cli) commands.push(generateCliCmd(repo.cli));
+  });
+  repositories.frontend_repositories.forEach((repo) => {
+    if (repo.cli) commands.push(generateCliCmd(repo.cli));
+  });
+
+  for (const command of commands) {
+    const newCmd = new Cmd(command.name)
       .description(command.description || '')
+      .aliases(command.aliases || [])
       .action(function (this: program) {
         command.run(toolbox, this.opts(), this.processedArgs, this);
       });
+
+    // Configure if command ignores args and options
+
+    if (command.parseIgnore) {
+      newCmd.helpOption(false);
+      newCmd.allowUnknownOption();
+    }
 
     // Add command arguments to commander.js
 
     if (command.arguments) {
       for (const arg of command.arguments) {
         const argument = new Argument(arg.name, arg.description);
+
         arg.required ? argument.argRequired() : argument.argOptional();
         if (arg.default) {
           argument.default(arg.default);
@@ -34,7 +58,10 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
         if (arg.choices) {
           argument.choices(arg.choices);
         }
-        action.addArgument(argument);
+        if (arg.variadic) {
+          argument.variadic = true;
+        }
+        newCmd.addArgument(argument);
       }
     }
 
@@ -52,13 +79,18 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
         if (opt.conflict) {
           option.conflicts(opt.conflict);
         }
-        action.addOption(option);
+        newCmd.addOption(option);
       }
     }
 
+    newCmd.showHelpAfterError();
+
+    // Add the command to the cli
+
+    toolbox.cli.addCommand(newCmd);
+
     // Populate toolbox.commands and toolbox.aliases with commands read from the commands folder
 
-    action.showHelpAfterError();
     toolbox.commands[command.name] = command;
     command.aliases?.forEach((alias) => {
       toolbox.aliases[alias] = command.name;

@@ -14,7 +14,7 @@ export interface FrontendVariables {
 
 export interface PromptsModels {
   title: string;
-  value: string | boolean;
+  value: string;
 }
 
 export interface DatabaseModelProperty {
@@ -35,7 +35,7 @@ export interface GenerateProps {
   frontend_service_folder: string;
   route_name_sLc: string;
   route_name_sUcfirst: string;
-  route_name_pLc: string;
+  route_name_pLf: string;
   route_name_pUcfirst: string;
   model_name_sLc: string;
   model_name_sUcfirst: string;

@@ -3,6 +3,7 @@ import repositories from '@src/assets/repositories.js';
 import { NewProps } from '@src/types/commands/new';
 import simpleGit from 'simple-git';
 import url from 'url';
+import { Repository } from '@src/types/repositories';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const newCommand: Command = {
@@ -89,36 +90,21 @@ const newCommand: Command = {
         props.backend_path = '';
       }
     }
-
-    // get repositories list
-
-    const frontend_repositories: string[] = [];
-    const backend_repositories: string[] = [];
-    repositories.frontend_repositories.forEach((repo) => {
-      frontend_repositories.push(repo.name);
-    });
-    repositories.backend_repositories.forEach((repo) => {
-      backend_repositories.push(repo.name);
-    });
-
     // choose repository
+    let frontend_repo_selected: Repository | undefined;
+    let backend_repo_selected: Repository | undefined;
 
-    let frontend_repo_res: string = '';
-    let backend_repo_res: string = '';
     if (single) {
       if (front) {
-        frontend_repo_res = await prompts.select('Select the frontend repository', frontend_repositories, undefined, true);
+        frontend_repo_selected = await prompts.select('Select the frontend repository', repositories.frontend_repositories.toPromptChoices('name'));
       }
       if (back) {
-        backend_repo_res = await prompts.select('Select the backend repository', backend_repositories, undefined, true);
+        backend_repo_selected = await prompts.select('Select the backend repository', repositories.backend_repositories.toPromptChoices('name'));
       }
     } else {
-      frontend_repo_res = await prompts.select('Select the frontend repository', frontend_repositories, undefined, true);
-      backend_repo_res = await prompts.select('Select the backend repository', backend_repositories, undefined, true);
+      frontend_repo_selected = await prompts.select('Select the frontend repository', repositories.frontend_repositories.toPromptChoices('name'));
+      backend_repo_selected = await prompts.select('Select the backend repository', repositories.backend_repositories.toPromptChoices('name'));
     }
-
-    const frontend_repo_selected = repositories.frontend_repositories.filter((repo) => (repo.name = frontend_repo_res))[0];
-    const backend_repo_selected = repositories.backend_repositories.filter((repo) => (repo.name = backend_repo_res))[0];
 
     // get repositories
 
@@ -127,13 +113,14 @@ const newCommand: Command = {
 
     if (frontend_repo_selected) {
       props.frontend_repository = frontend_repo_selected.name;
+      props.frontend_cli = frontend_repo_selected.cli;
       const downloadFrontendRepository = () => {
         return new Promise(async (resolve, reject) => {
           try {
             if (exists(frontend_repo_dir)) {
               await removeAsync(frontend_repo_dir);
             }
-            await simpleGit().clone(frontend_repo_selected.url, frontend_repo_dir, {});
+            await simpleGit().clone(frontend_repo_selected!.url, frontend_repo_dir, {});
             resolve(true);
           } catch (err) {
             await toolbox.loader.fail();
@@ -153,13 +140,14 @@ const newCommand: Command = {
 
     if (backend_repo_selected) {
       props.backend_repository = backend_repo_selected.name;
+      props.backend_cli = backend_repo_selected.cli;
       const downloadBackendRepository = () => {
         return new Promise(async (resolve, reject) => {
           try {
             if (exists(backend_repo_dir)) {
               await removeAsync(backend_repo_dir);
             }
-            await simpleGit().clone(backend_repo_selected.url, backend_repo_dir, {});
+            await simpleGit().clone(backend_repo_selected!.url, backend_repo_dir, {});
             resolve(true);
           } catch (err) {
             await toolbox.loader.fail();

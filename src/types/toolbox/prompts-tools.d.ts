@@ -2,6 +2,10 @@ import prompts, { Answers, PromptObject } from 'prompts';
 
 export type Validate = (input: string) => boolean | string;
 
+interface SkChoice<T> extends prompts.Choice {
+  value?: T;
+}
+
 export interface SkPrompts {
   /**
    * Prompt a yes/no question
@@ -25,20 +29,18 @@ export interface SkPrompts {
    * @param message Message to prompt
    * @param choices List of choices
    * @param initial Default response when prompting '0' if not provided
-   * @param convert
    * @returns response
    */
-  select(message: any, choices: any, initial = 0, convert = false): Promise<any>;
+  select<T>(message: prompts.ValueOrFunc<string>, choices: SkChoice<T>[], initial = 0): Promise<T>;
 
   /**
    * Prompt a multiple choice select
    * @param message Message to prompt
    * @param choices List of choices
    * @param initial Default response when prompting '0' if not provided
-   * @param convert
    * @returns response
    */
-  multiSelect(message: any, choices: any, initial = 0, convert = false): Promise<any>;
+  multiSelect<T>(message: prompts.ValueOrFunc<string>, choices: SkChoice<T>[], initial = 0): Promise<T[]>;
 
   /**
    * Prompt for a string separated by ,

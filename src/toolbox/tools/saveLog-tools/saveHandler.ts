@@ -5,34 +5,24 @@ import { Toolbox } from '../../toolbox.js';
 import { ArgsTypes } from '@src/types/toolbox/saveLog/funcParams';
 import { FsAction } from './fsAction.js';
 
-class SaveFiles {
+class SaveHandler {
   classAlias = false;
 
   proxyHandle: SkProxyHandler<any> = {
     main: this,
     apply: async function (target, scope, args: ArgsTypes[]) {
       if (!args.slice(-1).pop()?.target) {
-        const isDbCommand = this.main.isDbCommand();
         const watcher = await fileWatcher();
         watcher.on('all', (event, path, stats) => {
           switch (event) {
             case 'change':
               {
-                if (!isDbCommand) updateFileSystem(path, FsAction.Update, stats);
+                updateFileSystem(path, FsAction.Update, stats);
               }
               break;
             case 'add':
               {
-                if (!isDbCommand) {
-                  updateFileSystem(path, FsAction.Create, stats);
-                  return;
-                }
-                const cjsPath = path.replace('.js', '.cjs');
-                let action = FsAction.Create;
-                if (this.main.toolbox.fileSystem.exists(cjsPath)) {
-                  action = FsAction.Update;
-                }
-                updateFileSystem(cjsPath, action, stats);
+                updateFileSystem(path, FsAction.Create, stats);
               }
               break;
           }
@@ -43,10 +33,13 @@ class SaveFiles {
 
         return results;
       }
-      const dir = args
-        .slice(-1)
-        .pop()!
-        .target!.replace(/$(\/)*/g, '');
+
+      const dir = this.main.toolbox.fileSystem.path(
+        args
+          .slice(-1)
+          .pop()!
+          .target!.replace(/$(\/)*/g, '')
+      );
       const overwrite = await this.main.toolbox.fileSystem.existsAsync(dir);
 
       let action: FsAction = FsAction.Create;
@@ -60,6 +53,7 @@ class SaveFiles {
       }
 
       // here we bind method with our class by accessing reference to instance
+
       const results = await target.bind(this.main)(...args);
 
       updateFileSystem(dir, action);
@@ -69,7 +63,6 @@ class SaveFiles {
   };
   toolbox: Toolbox;
   filesSize: number | null;
-  databaseCommands: string[];
 
   constructor(toolbox: Toolbox) {
     // Get all methods of choosen class
@@ -81,17 +74,12 @@ class SaveFiles {
 
     this.toolbox = toolbox;
     this.filesSize = null;
-    this.databaseCommands = ['initdb', 'database'];
 
     // Replace all methods with Proxy methods
     methods.forEach((methodName) => {
       this[methodName as keyof typeof this] = new Proxy(this[methodName as keyof typeof this], this.proxyHandle);
     });
   }
-  isDbCommand() {
-    const command = this.toolbox.command;
-    return this.databaseCommands.includes(command!.name());
-  }
 }
 
-export default SaveFiles;
+export default SaveHandler;

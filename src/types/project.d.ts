@@ -3,23 +3,16 @@
  */
 export interface cliFile {
   projects: {
-    backend?: {
-      path: string;
-      skulljs_repository: string;
-      version: string;
-    };
-    frontend?: {
-      path: string;
-      skulljs_repository: string;
-      version: string;
-    };
+    backend?: RepositorySkJson;
+    frontend?: RepositorySkJson;
   };
   cli_version: string;
 }
 
-export interface Repository {
+export interface RepositorySkJson {
   path: string;
   skulljs_repository: string;
+  cli?: string;
   version: string;
 }
 
@@ -38,11 +31,11 @@ export default interface Project {
   /**
    * backend if it exist
    */
-  backend?: Repository;
+  backend?: RepositorySkJson;
   /**
    * frontend if it exist
    */
-  frontend?: Repository;
+  frontend?: RepositorySkJson;
 }
 
 export interface ProjectUse {
@@ -54,9 +47,9 @@ export interface ProjectUse {
   /**
    * backend if it exist
    */
-  backend: Repository;
+  backend: RepositorySkJson;
   /**
    * frontend if it exist
    */
-  frontend: Repository;
+  frontend: RepositorySkJson;
 }

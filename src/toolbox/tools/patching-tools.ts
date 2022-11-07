@@ -73,23 +73,6 @@ function patchString(data: string, opts: SkPatchingOptions = {}): string | false
   }
 }
 
-/**
- * Conditionally places a string into a file before or after another string,
- * or replacing another string, or deletes a string. Async.
- *
- * @param filename        File to be patched
- * @param opts            Options
- * @param opts.insert     String to be inserted
- * @param opts.before     Insert before this string
- * @param opts.after      Insert after this string
- * @param opts.replace    Replace this string
- * @param opts.delete     Delete this string
- * @param opts.force      Write even if it already exists
- *
- * @example
- *   await toolbox.patching.patch('thing.js', { before: 'bar', insert: 'foo' })
- *
- */
 async function patch(filename: string, ...opts: SkPatchingOptions[]): Promise<string | false> {
   return update(filename, (data: string) => {
     const result = opts.reduce((updatedData: string, opt: SkPatchingOptions) => patchString(updatedData, opt) || updatedData, data);

@@ -1,5 +1,5 @@
   @Delete(':<%= props.model_id %>')
   @ApiOkResponse({ type: <%= props.model_name_sUcfirst %> })
   remove(@Param('<%= props.model_id %>') <%= props.model_id %>: <%= props.model_id_type %>) {
-    return this.<%= props.route_name_pLc %>Service.remove(+<%= props.model_id %>);
+    return this.<%= props.route_name_pLf %>Service.remove(+<%= props.model_id %>);
   }

@@ -2,7 +2,7 @@ import toolbox from '@src/toolbox/toolbox.js';
 import { CRUDDataAngular, CRUDDataNestjs, FileToGenerate, GenerateProps } from '@src/types/commands/route-create';
 import asyncForEach from '@src/utils/asyncForEach.js';
 
-const { command, saveLog, exit } = toolbox;
+const { command, template, exit } = toolbox;
 
 export function getBackendFilesToGenerates(skulljs_repository: string, props: GenerateProps): FileToGenerate[] {
   let filesToGenerates: FileToGenerate[] = [];
@@ -22,23 +22,23 @@ function getBackendNestJsFilesToGenerates(props: GenerateProps): FileToGenerate[
   return [
     {
       template: 'route-create/backend/nestjs/route.module.ts.ejs',
-      target: `${props.backend_route_folder}/${'route.module.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.backend_route_folder}/${'route.module.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/backend/nestjs/route.service.ts.ejs',
-      target: `${props.backend_route_folder}/${'route.service.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.backend_route_folder}/${'route.service.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/backend/nestjs/route.service.spec.ts.ejs',
-      target: `${props.backend_route_folder}/${'route.service.spec.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.backend_route_folder}/${'route.service.spec.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/backend/nestjs/route.controller.ts.ejs',
-      target: `${props.backend_route_folder}/${'route.controller.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.backend_route_folder}/${'route.controller.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/backend/nestjs/route.controller.spec.ts.ejs',
-      target: `${props.backend_route_folder}/${'route.controller.spec.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.backend_route_folder}/${'route.controller.spec.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/backend/nestjs/entities/model.entity.ts.ejs',
@@ -75,13 +75,13 @@ async function getBackendNestJsCRUDFiles(props: GenerateProps): Promise<CRUDData
     const crud_array_service: string[] = [];
     const crud_array_controller: string[] = [];
     await asyncForEach(props.crud, async (crud_element) => {
-      const crud_file_service = await saveLog.generate({
+      const crud_file_service = await template.generate({
         template: `route-create/backend/nestjs/service/crud/${crud_element}.ejs`,
         props: props,
       });
       crud_array_service.push(crud_file_service);
 
-      const crud_file_controller = await saveLog.generate({
+      const crud_file_controller = await template.generate({
         template: `route-create/backend/nestjs/controller/crud/${crud_element}.ejs`,
         props: props,
       });
@@ -111,11 +111,11 @@ function getFrontendAngularFilesToGenerates(props: GenerateProps): FileToGenerat
   return [
     {
       template: 'route-create/frontend/angular/route.service.ts.ejs',
-      target: `${props.frontend_service_folder}/${'route.service.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.frontend_service_folder}/${'route.service.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/frontend/angular/route.service.spec.ts.ejs',
-      target: `${props.frontend_service_folder}/${'route.service.spec.ts.ejs'.replace('route', props.route_name_pLc).replace('.ejs', '')}`,
+      target: `${props.frontend_service_folder}/${'route.service.spec.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
     },
     {
       template: 'route-create/frontend/angular/entities/model.entity.ts.ejs',
@@ -151,7 +151,7 @@ async function getFrontendAngularCRUDFiles(props: GenerateProps): Promise<CRUDDa
   if (props.crud) {
     const crud_array_service: string[] = [];
     await asyncForEach(props.crud, async (crud_element) => {
-      const crud_file_service = await saveLog.generate({
+      const crud_file_service = await template.generate({
         template: `route-create/frontend/angular/service/crud/${crud_element}.ejs`,
         props: props,
       });

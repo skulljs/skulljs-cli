@@ -1,5 +1,5 @@
 import { Toolbox } from '../../toolbox.js';
-import SaveFiles from './saveFiles.js';
+import SaveHandler from './saveHandler.js';
 
 import { GenerateOptions } from '@src/types/toolbox/template-tools';
 import { CopyParams, RunParams, WriteParams } from '@src/types/toolbox/saveLog/funcParams';
@@ -8,7 +8,7 @@ import { CopyParams, RunParams, WriteParams } from '@src/types/toolbox/saveLog/f
  * @Class Save
  * Used to save newly created and updated files in the toolbox to display at the end of each command
  */
-class Save extends SaveFiles {
+class SaveMethods extends SaveHandler {
   constructor(toolbox: Toolbox) {
     super(toolbox);
   }
@@ -16,18 +16,17 @@ class Save extends SaveFiles {
     return await this.toolbox.template.generate(options);
   }
   async copy({ from, target, options }: CopyParams) {
-    await this.toolbox.fileSystem.copyAsync(from, target, options);
+    return await this.toolbox.fileSystem.copyAsync(from, target, options);
   }
   async write({ target, content, options }: WriteParams) {
-    await this.toolbox.fileSystem.writeAsync(target, content, options);
+    return await this.toolbox.fileSystem.writeAsync(target, content, options);
   }
   async run({ command, args, target, action, options }: RunParams): Promise<string> {
-    const output = await this.toolbox.system.run(command, args, options);
-    return output;
+    return await this.toolbox.system.run(command, args, options);
   }
 }
 
 function buildSave(toolbox: Toolbox) {
-  return new Save(toolbox);
+  return new SaveMethods(toolbox);
 }
-export { buildSave, Save };
+export { buildSave, SaveMethods as Save };

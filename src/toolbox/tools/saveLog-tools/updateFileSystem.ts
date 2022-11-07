@@ -18,8 +18,6 @@ function updateFileSystem(filePath: string, action: FsAction, stats?: Stats) {
     path,
   } = toolbox;
 
-  if (filesCreated[path.basename(filePath)]) return;
-
   let readablePath = filePath;
 
   if (project_def) {
@@ -38,7 +36,5 @@ function updateFileSystem(filePath: string, action: FsAction, stats?: Stats) {
   const systemUpdate = { action: action, path: readablePath, size: size };
 
   !Array.isArray(toolbox.fileSystemUpdates) ? (toolbox.fileSystemUpdates = [systemUpdate]) : toolbox.fileSystemUpdates.push(systemUpdate);
-
-  filesCreated[path.basename(readablePath)] = action === FsAction.Create ? true : false;
 }
 export default updateFileSystem;

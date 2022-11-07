@@ -13,7 +13,7 @@ import { fileSystem } from '@src/toolbox/tools/filesystem-tools.js';
 import { strings } from '@src/toolbox/tools/strings-tools.js';
 import { buildTemplate } from '@src/toolbox/tools/template-tools.js';
 import { system } from '@src/toolbox/tools/system-tools.js';
-import { buildSave } from '@src/toolbox/tools/saveLog-tools/save.js';
+import { buildSave } from '@src/toolbox/tools/saveLog-tools/saveMethods.js';
 import { patching } from '@src/toolbox/tools/patching-tools.js';
 import { meta } from '@src/toolbox/tools/meta-tools.js';
 import { exitHelp } from '@src/toolbox/tools/exit-with-help-tools.js';
@@ -29,7 +29,7 @@ export class Toolbox implements SkToolBox {
   aliases: Aliases = {};
   command?: Cli = undefined;
   // Known Extensions
-  cli = new Cli();
+  cli = new Cli().version(meta.version);
   path = path;
   prompts = prompt;
   print = print;

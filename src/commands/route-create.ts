@@ -1,5 +1,5 @@
 import { Command } from '@src/types/command';
-import { ProjectUse, Repository } from '@src/types/project';
+import { ProjectUse, RepositorySkJson } from '@src/types/project';
 import { FileToGenerate, FrontendVariables, GenerateProps, PromptsModels } from '@src/types/commands/route-create';
 import { getAllModels, getModel } from '@src/assets/route-create/databaseUtils.js';
 import { getBackendFilesToGenerates, getBackendCRUDData, getFrontendCRUDData, getFrontendFilesToGenerates } from '@src/assets/route-create/generateUtils.js';
@@ -28,11 +28,10 @@ const routeCommand: Command = {
   run: async (toolbox, options, args, command) => {
     const {
       print: { infoLoader, warn, error },
-      fileSystem: { exists, removeAsync },
+      fileSystem: { exists },
       saveLog,
       prompts,
-      strings: { upperFirst, lowerCase, singular, plural },
-      path,
+      strings: { upperFirst, lowerCase, singular, plural, lowerFirst },
       project: { frontend },
       exit,
     } = toolbox;
@@ -41,8 +40,7 @@ const routeCommand: Command = {
     const { backend } = toolbox.project as ProjectUse;
 
     // Check route name
-
-    const pattern = /^[A-z]{3,}$/g;
+    const pattern = /^([A-z]+\/)*[A-z]{3,}$/g;
 
     function isFilePath(path: string, isArgs: boolean): boolean {
       let is_file_path = pattern.test(path);
@@ -66,7 +64,7 @@ const routeCommand: Command = {
       isFilePath(route_path, true);
     } else {
       do {
-        route_path = await prompts.ask('Path of the route ?', undefined, 'example/my-route');
+        route_path = await prompts.ask('Path of the route ?', undefined, 'example/myRoute');
       } while (!isFilePath(route_path, false));
     }
 
@@ -92,8 +90,8 @@ const routeCommand: Command = {
 
     // ask user
 
-    const route_name = lowerCase('' + route_path.split('/').pop());
-    const selected_model = await prompts.select('Select a model', models, undefined, false);
+    const route_name = route_path.split('/').pop()!;
+    const selected_model = await prompts.select('Select a model', models);
     const crud_choices = [
       {
         title: 'Create',
@@ -121,9 +119,6 @@ const routeCommand: Command = {
 
     // add files
     toolbox.loader.start(infoLoader('Generating files'));
-    if (exists(backend_variables.backend_route_folder)) {
-      await removeAsync(backend_variables.backend_route_folder);
-    }
 
     const model = getModel(backend.skulljs_repository, backend_variables.database_models_file, selected_model);
     let model_id = '';
@@ -140,7 +135,7 @@ const routeCommand: Command = {
       frontend_service_folder: frontend_variables ? frontend_variables.frontend_service_folder : '',
       route_name_sLc: lowerCase(singular(route_name)),
       route_name_sUcfirst: upperFirst(singular(route_name)),
-      route_name_pLc: lowerCase(plural(route_name)),
+      route_name_pLf: lowerFirst(plural(route_name)),
       route_name_pUcfirst: upperFirst(plural(route_name)),
       model_name_sLc: lowerCase(singular(model.model_name)),
       model_name_sUcfirst: upperFirst(singular(model.model_name)),
@@ -159,25 +154,29 @@ const routeCommand: Command = {
 
     // backend
     const backendFilesToGenerates: FileToGenerate[] = getBackendFilesToGenerates(backend.skulljs_repository, props);
-    backendFilesToGenerates.forEach((file) => {
-      saveLog.generate({
-        template: file.template,
-        target: file.target,
-        props: props,
-      });
-    });
-
-    // frontend
-    if (createService) {
-      props.frontend_crud_data = await getFrontendCRUDData((frontend as Repository).skulljs_repository, props);
-      const frontendFilesToGenerates: FileToGenerate[] = getFrontendFilesToGenerates((frontend as Repository).skulljs_repository, props);
-      frontendFilesToGenerates.forEach((file) => {
-        saveLog.generate({
+    await Promise.all(
+      backendFilesToGenerates.map(async (file) => {
+        await saveLog.generate({
           template: file.template,
           target: file.target,
           props: props,
         });
-      });
+      })
+    );
+
+    // frontend
+    if (createService) {
+      props.frontend_crud_data = await getFrontendCRUDData((frontend as RepositorySkJson).skulljs_repository, props);
+      const frontendFilesToGenerates: FileToGenerate[] = getFrontendFilesToGenerates((frontend as RepositorySkJson).skulljs_repository, props);
+      await Promise.all(
+        frontendFilesToGenerates.map(async (file) => {
+          await saveLog.generate({
+            template: file.template,
+            target: file.target,
+            props: props,
+          });
+        })
+      );
     }
 
     await toolbox.loader.succeed();

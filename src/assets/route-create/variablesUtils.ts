@@ -1,10 +1,10 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { BackendVariables, FrontendVariables } from '@src/types/commands/route-create';
-import { Repository } from '@src/types/project';
+import { RepositorySkJson } from '@src/types/project';
 
 const { command, path, exit } = toolbox;
 
-export function getBackendVariables(backend: Repository, route_path: string): BackendVariables {
+export function getBackendVariables(backend: RepositorySkJson, route_path: string): BackendVariables {
   let backend_variables: BackendVariables = { backend_src_folder: '', backend_routes_folder: '', backend_route_folder: '', database_models_file: '' };
   switch (backend.skulljs_repository) {
     case 'nestjs':
@@ -19,7 +19,7 @@ export function getBackendVariables(backend: Repository, route_path: string): Ba
   return backend_variables;
 }
 
-function getNestJsBackendVariables(backend: Repository, route_path: string): BackendVariables {
+function getNestJsBackendVariables(backend: RepositorySkJson, route_path: string): BackendVariables {
   const backend_src_folder = path.join(backend.path, 'src/');
   const backend_routes_folder = path.join(backend_src_folder, 'routes');
   const backend_route_folder = path.join(backend_routes_folder, route_path);
@@ -28,7 +28,7 @@ function getNestJsBackendVariables(backend: Repository, route_path: string): Bac
   return { backend_src_folder, backend_routes_folder, backend_route_folder, database_models_file };
 }
 
-export function getFrontendVariables(frontend: Repository, backend_route_folder: string): FrontendVariables {
+export function getFrontendVariables(frontend: RepositorySkJson, backend_route_folder: string): FrontendVariables {
   let frontend_variables: FrontendVariables = { frontend_service_name: '', frontend_src_folder: '', frontend_services_folder: '', frontend_service_folder: '' };
   switch (frontend.skulljs_repository) {
     case 'angular':
@@ -43,7 +43,7 @@ export function getFrontendVariables(frontend: Repository, backend_route_folder:
   return frontend_variables;
 }
 
-function getAngularFrontendVariables(frontend: Repository, backend_route_folder: string): FrontendVariables {
+function getAngularFrontendVariables(frontend: RepositorySkJson, backend_route_folder: string): FrontendVariables {
   const frontend_service_name = path.basename(backend_route_folder);
   const frontend_src_folder = path.join(frontend?.path || '', 'src');
   const frontend_services_folder = path.join(frontend_src_folder, 'app/services');

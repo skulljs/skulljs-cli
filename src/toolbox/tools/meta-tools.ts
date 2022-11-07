@@ -10,9 +10,6 @@ function findVersion(): string {
 }
 const version = findVersion();
 
-/**
- * Base directory for the skulljs-cli
- */
 const directory = path.join(__dirname, '../..');
 
 const meta: SkMeta = {

@@ -1,5 +1,5 @@
-import SaveFiles from '@src/extensions/toolbox/saveLog-tools/saveFiles.js';
+import SaveHandler from '@src/toolbox/tools/saveLog-tools/saveHandler.js';
 
 export interface SkProxyHandler<T> extends ProxyHandler<T> {
-  main: SaveFiles;
+  main: SaveHandler;
 }

@@ -20,7 +20,7 @@ async function postGenerationNestJsScript(backend_variables: BackendVariables, p
   if (fileSystem.exists(app_module_path)) {
     let app_module_file = fileSystem.read(app_module_path) as string;
     const import_marker_string = "import { configuration } from './configs/configuration';";
-    const import_string = `import { ${props.route_name_pUcfirst}Module } from './routes/${props.route_name_pLc}/${props.route_name_pLc}.module';`;
+    const import_string = `import { ${props.route_name_pUcfirst}Module } from './routes/${props.route_name_pLf}/${props.route_name_pLf}.module';`;
     if (!app_module_file.includes(import_string)) {
       const import_replace_string = `${import_marker_string}\n${import_string}`;
       app_module_file = app_module_file.replace(import_marker_string, import_replace_string);

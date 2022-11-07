@@ -4,13 +4,6 @@ import nodeSpawn from 'cross-spawn';
 import { isNil } from './utils.js';
 import { SkSystem } from '@src/types/toolbox/system-tools.js';
 
-/**
- * Executes a commandline via execa.
- * @param commandLine The command line to execute.
- * @param args The arguments used by the command.
- * @param options Additional child_process options for node.
- * @returns Promise with result.
- */
 async function run(commandLine: string, args?: string, options: RunOptions = {}): Promise<string> {
   const trimString = options.trim ? (str: any) => str.trim() : (str: any) => str;
   const execArgs = args?.split(' ');
@@ -24,18 +17,9 @@ async function run(commandLine: string, args?: string, options: RunOptions = {})
   });
 }
 
-/**
- * Uses cross-spawn to run a process.
- * @param params object
- * @param params.commandLine - The command line to execute.
- * @param params.args - The arguments used by the command.
- * @param params.options - Additional child_process options for node.
- * @returns The response object.
- */
-async function spawn(params: { commandLine: string; args?: string; options?: SpawnOpts }): Promise<SpawnResult> {
-  const execArgs = params.args?.split(' ');
+async function spawn(params: { commandLine: string; args?: string[]; options?: SpawnOpts }): Promise<SpawnResult> {
   return new Promise((resolve, _reject) => {
-    const spawned = nodeSpawn(params.commandLine, execArgs, params.options);
+    const spawned = nodeSpawn(params.commandLine, params.args, params.options);
     const result: SpawnResult = {
       stdout: null,
       status: null,

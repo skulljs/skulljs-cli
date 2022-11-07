@@ -4,11 +4,6 @@ import { Toolbox } from '@src/toolbox/toolbox.js';
 import { replace } from './utils.js';
 
 function buildTemplate(toolbox: Toolbox): SkTemplate {
-  /**
-   * Render ejs templates
-   * @param opts Options to generate
-   * @return Rendered template content
-   */
   async function generate(opts: GenerateOptions): Promise<string> {
     const {
       meta: { directory },
