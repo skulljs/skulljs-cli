@@ -3,6 +3,5 @@
  * @param command Commander command object
  * @param message Message to display when exiting
  */
-function exit(command: Command, message: string | string[]): void;
-
-export type SkExit = exit;
+type SkExit = (command: Command, message: string | string[]) => void;
+export { SkExit };
