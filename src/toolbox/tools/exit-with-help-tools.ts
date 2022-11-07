@@ -8,6 +8,6 @@ function exit(command: Command, message: string | string[]) {
   command.error(message);
 }
 
-const exitHelp: SkExit = { exit };
+const exitHelp: SkExit = exit;
 
 export { exitHelp, SkExit };
