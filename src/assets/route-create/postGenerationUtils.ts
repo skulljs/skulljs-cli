@@ -1,5 +1,8 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { BackendVariables, FrontendVariables, GenerateProps } from '@src/types/commands/route-create';
+import ts from 'typescript';
+import { nestAppModuleTransformer } from '../fileUpdate/nestAppModuleTransformer.js';
+import slash from 'slash';
 
 const { command, saveLog, fileSystem, exit, path } = toolbox;
 
@@ -18,18 +21,30 @@ export async function postGenerationBackendScript(skulljs_repository: string, ba
 async function postGenerationNestJsScript(backend_variables: BackendVariables, props: GenerateProps) {
   const app_module_path = path.join(backend_variables.backend_src_folder, 'app.module.ts');
   if (fileSystem.exists(app_module_path)) {
-    let app_module_file = fileSystem.read(app_module_path) as string;
-    const import_marker_string = "import { configuration } from './configs/configuration';";
-    const import_string = `import { ${props.route_name_pUcfirst}Module } from './routes/${props.route_name_pLf}/${props.route_name_pLf}.module';`;
-    if (!app_module_file.includes(import_string)) {
-      const import_replace_string = `${import_marker_string}\n${import_string}`;
-      app_module_file = app_module_file.replace(import_marker_string, import_replace_string);
-      const import_array_marker_string = '    ConfigModule.forRoot({ load: [configuration], ignoreEnvFile: true, isGlobal: true }),';
-      const import_array_string = `    ${props.route_name_pUcfirst}Module,`;
-      const import_array_replace_string = `${import_array_string}\n${import_array_marker_string}`;
-      app_module_file = app_module_file.replace(import_array_marker_string, import_array_replace_string);
+    const program = ts.createProgram({
+      options: {
+        target: ts.ScriptTarget.ES2015,
+      },
+      rootNames: [app_module_path],
+    });
+
+    const sourceFile = program.getSourceFile(app_module_path);
+
+    if (!sourceFile) return;
+
+    let relativePath = slash(path.relative(path.dirname(app_module_path), path.join(props.backend_route_folder, `${props.route_name_pLf}.module`)));
+    if (!['.', '/'].includes(relativePath[0])) {
+      relativePath = './' + relativePath;
     }
-    await saveLog.write({ target: app_module_path, content: app_module_file });
+
+    const transformationResult = ts.transform(sourceFile, [
+      nestAppModuleTransformer({
+        moduleName: `${props.route_name_pUcfirst}Module`,
+        modulePath: relativePath,
+      }),
+    ]);
+    const transformedSourceFile = transformationResult.transformed[0];
+    await saveLog.write({ target: app_module_path, content: ts.createPrinter().printFile(transformedSourceFile), options: { atomic: true } });
   }
 }
 
