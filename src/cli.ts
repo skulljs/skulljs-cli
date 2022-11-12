@@ -10,6 +10,7 @@ import setCommand from '@src/runtime/set-command.js';
 import '@src/utils/arrayExtensions.js';
 import repositories from './assets/repositories.js';
 import { generateCliCmd } from './assets/forwarding/commandGenerator.js';
+import { EOL } from 'node:os';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -83,7 +84,17 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
       }
     }
 
+    // Custom commander error display for subCommands
+
     newCmd.showHelpAfterError();
+    newCmd.configureOutput({
+      writeErr(str) {
+        if (!['\n', '\r\n'].includes(str)) {
+          console.error(str.trim(), EOL);
+        }
+      },
+      outputError: (str, write) => write(toolbox.print.chalk.red.bold(`Skulljs-cli - ${command.name} : ${str.trim()}`)),
+    });
 
     // Add the command to the cli
 
@@ -96,12 +107,17 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
       toolbox.aliases[alias] = command.name;
     });
   }
+
+  // Custom commander error display for the cli
+
   toolbox.cli.showHelpAfterError();
-
-  // Custom commander error display
-
   toolbox.cli.configureOutput({
-    outputError: (str, write) => write(toolbox.print.chalk.red.bold(`Skulljs-cli : ${str}`)),
+    writeErr(str) {
+      if (!['\n', '\r\n'].includes(str)) {
+        console.error(str.trim(), EOL);
+      }
+    },
+    outputError: (str, write) => write(toolbox.print.chalk.red.bold(`Skulljs-cli : ${str.trim()}`)),
   });
 
   // Load all extensions before running commands

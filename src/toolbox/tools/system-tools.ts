@@ -24,13 +24,23 @@ async function spawn(params: { commandLine: string; args?: string[]; options?: S
       stdout: null,
       status: null,
       error: null,
+      stderr: null,
     };
     if (spawned.stdout) {
       spawned.stdout.on('data', (data) => {
         if (isNil(result.stdout)) {
-          result.stdout = data;
+          result.stdout = data.toString();
         } else {
-          result.stdout += data;
+          result.stdout += data.toString();
+        }
+      });
+    }
+    if (spawned.stderr) {
+      spawned.stderr.on('data', (data) => {
+        if (isNil(result.stderr)) {
+          result.stderr = data.toString();
+        } else {
+          result.stderr += data.toString();
         }
       });
     }

@@ -6,7 +6,10 @@ const repositories: Repositories = {
       name: 'angular',
       url: 'https://github.com/skulljs/angular',
       matching_string_copy: ['./!(.git|.mergify.yml|.editorconfig|.prettierrc|CHANGELOG.md|README.md)', './!(.github|.git)/**/*'],
-      cli: 'ng',
+      cli: {
+        alias: 'ng',
+        path: '@angular/cli/bin/ng.js',
+      },
     },
   ],
   backend_repositories: [
@@ -14,7 +17,10 @@ const repositories: Repositories = {
       name: 'nestjs',
       url: 'https://github.com/skulljs/nestjs',
       matching_string_copy: ['./!(.git|.mergify.yml|.editorconfig|.prettierrc|CHANGELOG.md|README.md)', './!(.github|.git)/**/*'],
-      cli: 'nest',
+      cli: {
+        alias: 'nest',
+        path: '@nestjs/cli/bin/nest.js',
+      },
     },
   ],
 };

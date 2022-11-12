@@ -1,3 +1,4 @@
+import { CliInfos } from './repositories';
 /**
  * Structure of a skulljs-cli file
  */
@@ -12,7 +13,7 @@ export interface cliFile {
 export interface RepositorySkJson {
   path: string;
   skulljs_repository: string;
-  cli?: string;
+  cli?: CliInfos;
   version: string;
 }
 

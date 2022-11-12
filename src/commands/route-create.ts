@@ -40,32 +40,31 @@ const routeCommand: Command = {
     const { backend } = toolbox.project as ProjectUse;
 
     // Check route name
-    const pattern = /^([A-z]+\/)*[A-z]{3,}$/g;
+    const pattern = /^([A-Za-z]+\/)*[A-Za-z]{3,}$/m;
 
-    function isFilePath(path: string, isArgs: boolean): boolean {
+    function isFilePath(path: string, isArgs: boolean): { validate: boolean; errorMsg: string } {
       let is_file_path = pattern.test(path);
+      const errorMsg = `${path} is not valid : Min length : 3, Characters : letters/slashes, Example: sk route:create example/myroute`;
       if (!is_file_path) {
-        const errorMsg = [
-          `${route_path} is not a valid name. Use letters case and underscore only.`,
-          'The name should also be more than 3 caracters long.',
-          `Example: sk route:create dogs`,
-        ];
         if (isArgs) {
           exit(command, errorMsg);
-        } else {
-          errorMsg.forEach((msg) => error(msg));
         }
       }
-      return is_file_path;
+      return { validate: is_file_path, errorMsg };
     }
 
     let route_path: string = args[0];
     if (route_path) {
       isFilePath(route_path, true);
     } else {
-      do {
-        route_path = await prompts.ask('Path of the route ?', undefined, 'example/myRoute');
-      } while (!isFilePath(route_path, false));
+      route_path = await prompts.ask(
+        'Path of the route ?',
+        (value) => {
+          const checker = isFilePath(value, false);
+          return checker.validate ? true : checker.errorMsg;
+        },
+        'example/myRoute'
+      );
     }
 
     // variables declarations

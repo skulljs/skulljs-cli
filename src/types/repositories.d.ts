@@ -2,7 +2,12 @@ export interface Repository {
   name: string;
   url: string;
   matching_string_copy: string[] | string | undefined;
-  cli?: string;
+  cli?: CliInfos;
+}
+
+export interface CliInfos {
+  alias: string;
+  path: string;
 }
 
 export interface Repositories {

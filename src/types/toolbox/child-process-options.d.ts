@@ -1,4 +1,4 @@
-import { ExecOptions, SpawnOptions } from 'node:child_process'
+import { ExecOptions, SpawnOptions } from 'node:child_process';
 
 /**
  * Child process exec options with additional properties
@@ -7,7 +7,7 @@ export interface RunOptions extends ExecOptions {
   /**
    * Remove trailing white space of the output
    */
-  trim?: boolean
+  trim?: boolean;
 }
 
 /**
@@ -17,11 +17,11 @@ export interface RunResult {
   /**
    * Output of the execa command
    */
-  stdout: string | null
+  stdout: string | null;
   /**
    * Error if any
    */
-  error: Error | null
+  error: Error | null;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface SpawnOpts extends SpawnOptions {
   /**
    * Remove trailing white space of the output
    */
-  trim?: boolean
+  trim?: boolean;
 }
 
 /**
@@ -41,13 +41,17 @@ export interface SpawnResult {
   /**
    * Output of the cross-spawn command
    */
-  stdout: null
+  stdout: string | null;
   /**
    * Return code of the command
    */
-  status: number | null
+  status: number | null;
   /**
    * Error if any
    */
-  error: Error | null
+  error: Error | null;
+  /**
+   * Output of the cross-spawn command error message
+   */
+  stderr: string | null;
 }
