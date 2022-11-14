@@ -6,7 +6,7 @@ import { getBackendFilesToGenerates, getBackendCRUDData, getFrontendCRUDData, ge
 import { getBackendVariables, getFrontendVariables } from '@src/assets/route-create/variablesUtils.js';
 import { postGenerationBackendScript, postGenerationFrontendScript } from '@src/assets/route-create/postGenerationUtils.js';
 
-const routeCommand: Command = {
+const routeCreateCommand: Command = {
   name: 'route:create',
   aliases: ['rc'],
   scope: 'in',
@@ -190,4 +190,4 @@ const routeCommand: Command = {
   },
 };
 
-export default routeCommand;
+export default routeCreateCommand;
