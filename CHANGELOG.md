@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.7 - sk forward
+
+- Add sk forward
+
 ## v0.9.6 - sk route
 
 - Add sk route
