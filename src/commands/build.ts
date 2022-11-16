@@ -1,5 +1,5 @@
-import { buildBackend } from '@src/assets/build/buildUtils.js';
-import { copyBackend } from '@src/assets/build/copyUtils.js';
+import { buildBackend } from '@src/assets/buildCommand/buildUtils.js';
+import { copyBackend } from '@src/assets/buildCommand/copyUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
 import url from 'url';
