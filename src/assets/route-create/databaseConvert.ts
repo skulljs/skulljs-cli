@@ -1,7 +1,7 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { ConvertMatrix } from '@src/types/commands/route-create';
 
-const { command, exit } = toolbox;
+const { exit } = toolbox;
 
 export function convertDatabaseTypeToTsType(skulljs_repository: string, type: string): string {
   let converted_type = '';
@@ -11,7 +11,7 @@ export function convertDatabaseTypeToTsType(skulljs_repository: string, type: st
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return converted_type;

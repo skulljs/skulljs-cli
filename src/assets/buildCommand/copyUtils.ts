@@ -1,7 +1,7 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { RepositorySkJson } from '@src/types/project';
 
-const { command, exit, fileSystem, path } = toolbox;
+const { exit, fileSystem, path } = toolbox;
 
 export async function copyBackend(backend: RepositorySkJson, output_path: string, protocol: string) {
   switch (backend.skulljs_repository) {
@@ -10,7 +10,7 @@ export async function copyBackend(backend: RepositorySkJson, output_path: string
       break;
 
     default:
-      exit(command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
       break;
   }
 
@@ -34,7 +34,7 @@ export async function copyFrontend(frontend: RepositorySkJson, output_path: stri
       break;
 
     default:
-      exit(command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
       break;
   }
 }

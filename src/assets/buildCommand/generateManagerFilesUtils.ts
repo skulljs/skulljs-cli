@@ -2,7 +2,7 @@ import toolbox from '@src/toolbox/toolbox.js';
 import { ManagerProps } from '@src/types/commands/build';
 import { RepositorySkJson } from '@src/types/project';
 
-const { command, exit, template } = toolbox;
+const { exit, template } = toolbox;
 
 export async function generateManagerFiles(backend: RepositorySkJson, output_path: string, manager: string, app_name: string, port: number) {
   switch (backend.skulljs_repository) {
@@ -11,7 +11,7 @@ export async function generateManagerFiles(backend: RepositorySkJson, output_pat
       break;
 
     default:
-      exit(command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
       break;
   }
 }

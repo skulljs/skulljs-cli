@@ -1,3 +1,0 @@
-  update(<%= props.model_id %>: <%= props.model_id_type %>, update<%= props.model_name_sUcfirst %>Dto: Update<%= props.model_name_sUcfirst %>Dto): Promise<<%= props.model_name_sUcfirst %>> {
-    return lastValueFrom(this.http.patch(`${this.baseurl}/${<%= props.model_id %>}`, update<%= props.model_name_sUcfirst %>Dto, this.httpOptions)) as Promise<<%= props.model_name_sUcfirst %>>;
-  }

@@ -1,6 +1,5 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { RepositorySkJson } from '@src/types/project';
-import ts from 'typescript';
 import { nestMainTransformer } from '../transformers/build/nest/mainHttps.js';
 import { nestMainTransformerLogs } from '../transformers/build/nest/mainLogs.js';
 import { nestAppModuleBuildTransformer } from '../transformers/build/nest/appModuleStatic.js';
@@ -8,7 +7,7 @@ import { BuildProps } from '@src/types/commands/build.js';
 import { nestConfigurationTransformer } from '../transformers/build/nest/configuration.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 
-const { command, exit, path, fileSystem, saveLog } = toolbox;
+const { exit, path } = toolbox;
 
 export async function postCopyBackendScript(backend: RepositorySkJson, output_path: string, buildProps: BuildProps) {
   switch (backend.skulljs_repository) {
@@ -17,7 +16,7 @@ export async function postCopyBackendScript(backend: RepositorySkJson, output_pa
       break;
 
     default:
-      exit(command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
       break;
   }
 }
@@ -83,7 +82,7 @@ export async function postCopyFrontendScript(frontend: RepositorySkJson, output_
       break;
 
     default:
-      exit(command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
       break;
   }
 }

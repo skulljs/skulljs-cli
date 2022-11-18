@@ -1,11 +1,10 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { BackendVariables, FrontendVariables, GenerateProps } from '@src/types/commands/route-create';
-import ts from 'typescript';
 import { nestAppModuleTransformer } from '../transformers/routes/nest/appModuleRouteImport.js';
 import slash from 'slash';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 
-const { command, saveLog, fileSystem, exit, path } = toolbox;
+const { exit, path } = toolbox;
 
 export async function postGenerationBackendScript(skulljs_repository: string, backend_variables: BackendVariables, props: GenerateProps) {
   switch (skulljs_repository) {
@@ -14,7 +13,7 @@ export async function postGenerationBackendScript(skulljs_repository: string, ba
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
 }
@@ -58,7 +57,7 @@ export function postGenerationFrontendScript(skulljs_repository: string, fronten
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
 }

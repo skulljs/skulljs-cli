@@ -1,7 +1,0 @@
-  findAll() {
-    return prisma.<%= props.model_name_Lc %>.findMany();
-  }
-
-  findOne(<%= props.model_id %>: <%= props.model_id_type %>) {
-    return prisma.<%= props.model_name_Lc %>.findUnique({ where: { <%= props.model_id %>} });
-  }

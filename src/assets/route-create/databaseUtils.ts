@@ -4,7 +4,6 @@ import { parsePrismaSchema } from '@loancrate/prisma-schema-parser';
 import { convertDatabaseTypeToTsType } from './databaseConvert.js';
 
 const {
-  command,
   strings: { upperFirst, lowerCase, plural },
   fileSystem: { read },
   exit,
@@ -18,7 +17,7 @@ export function getAllModels(skulljs_repository: string, database_models_file: s
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return models;
@@ -55,7 +54,7 @@ export function getModel(skulljs_repository: string, database_models_file: strin
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return model;

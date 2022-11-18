@@ -27,7 +27,7 @@ const routeCreateCommand: Command = {
   description: 'Add a route',
   run: async (toolbox, options, args, command) => {
     const {
-      print: { infoLoader, warn, error },
+      print: { infoLoader, warn },
       fileSystem: { exists },
       saveLog,
       prompts,

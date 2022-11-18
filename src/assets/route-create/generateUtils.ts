@@ -2,7 +2,7 @@ import toolbox from '@src/toolbox/toolbox.js';
 import { CRUDDataAngular, CRUDDataNestjs, FileToGenerate, GenerateProps } from '@src/types/commands/route-create';
 import asyncForEach from '@src/utils/asyncForEach.js';
 
-const { command, template, exit } = toolbox;
+const { template, exit } = toolbox;
 
 export function getBackendFilesToGenerates(skulljs_repository: string, props: GenerateProps): FileToGenerate[] {
   let filesToGenerates: FileToGenerate[] = [];
@@ -12,7 +12,7 @@ export function getBackendFilesToGenerates(skulljs_repository: string, props: Ge
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return filesToGenerates;
@@ -63,7 +63,7 @@ export async function getBackendCRUDData(skulljs_repository: string, props: Gene
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return backend_crud_data;
@@ -101,7 +101,7 @@ export function getFrontendFilesToGenerates(skulljs_repository: string, props: G
       break;
 
     default:
-      exit(command, `frontend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `frontend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return filesToGenerates;
@@ -140,7 +140,7 @@ export async function getFrontendCRUDData(skulljs_repository: string, props: Gen
       break;
 
     default:
-      exit(command, `backend repository ${skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
       break;
   }
   return frontend_crud_data;

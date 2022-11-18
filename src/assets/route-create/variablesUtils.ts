@@ -2,7 +2,7 @@ import toolbox from '@src/toolbox/toolbox.js';
 import { BackendVariables, FrontendVariables } from '@src/types/commands/route-create';
 import { RepositorySkJson } from '@src/types/project';
 
-const { command, path, exit } = toolbox;
+const { path, exit } = toolbox;
 
 export function getBackendVariables(backend: RepositorySkJson, route_path: string): BackendVariables {
   let backend_variables: BackendVariables = { backend_src_folder: '', backend_routes_folder: '', backend_route_folder: '', database_models_file: '' };
@@ -12,7 +12,7 @@ export function getBackendVariables(backend: RepositorySkJson, route_path: strin
       break;
 
     default:
-      exit(command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `backend repository ${backend.skulljs_repository} not implemented yet !`);
       break;
   }
 
@@ -36,7 +36,7 @@ export function getFrontendVariables(frontend: RepositorySkJson, backend_route_f
       break;
 
     default:
-      exit(command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
+      exit(toolbox.command, `frontend repository ${frontend.skulljs_repository} not implemented yet !`);
       break;
   }
 
