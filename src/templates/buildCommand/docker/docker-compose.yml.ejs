@@ -14,7 +14,7 @@ services:
     networks:
       - <%= props.app_name %>
     volumes:
-      - ./docker-data/mysql:/bitnami/mysql/data
+      - ../docker-data/mysql:/bitnami/mysql/data
   <%= props.app_name %>:
     stdin_open: true
     restart: always
