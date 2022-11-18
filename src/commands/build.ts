@@ -5,7 +5,6 @@ import { updateNpmPackage } from '@src/assets/buildCommand/npmPackageUtils.js';
 import { postCopyBackendScript, postCopyFrontendScript } from '@src/assets/buildCommand/postCopyUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
-import caca from '@src/toolbox/toolbox.js';
 import { BuildProps } from '@src/types/commands/build';
 
 const buildCommand: Command = {
