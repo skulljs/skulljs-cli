@@ -122,7 +122,7 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
 
   // Load all extensions before running commands
 
-  toolbox.cli.hook('preAction', (thisCommand, actionCommand) => {
+  toolbox.cli.hook('preSubcommand', (thisCommand, actionCommand) => {
     errorsHandler(toolbox, actionCommand);
     setCommand(toolbox, actionCommand);
     scopeExt(toolbox, toolbox.commands[actionCommand.name()]);
@@ -130,7 +130,7 @@ async function run(argv?: readonly string[] | undefined, options?: ParseOptions 
 
   // Run command
 
-  toolbox.cli.parseAsync(argv, options);
+  await toolbox.cli.parseAsync(argv, options);
 }
 
 export default run;

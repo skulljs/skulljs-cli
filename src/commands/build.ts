@@ -5,6 +5,8 @@ import { updateNpmPackage } from '@src/assets/buildCommand/npmPackageUtils.js';
 import { postCopyBackendScript, postCopyFrontendScript } from '@src/assets/buildCommand/postCopyUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
+import caca from '@src/toolbox/toolbox.js';
+import { BuildProps } from '@src/types/commands/build';
 
 const buildCommand: Command = {
   name: 'build',
@@ -61,6 +63,12 @@ const buildCommand: Command = {
       { title: 'Docker', value: 'docker' },
     ]);
 
+    const buildProps: BuildProps = {
+      port: Number.parseInt(port),
+      hostname,
+      protocol,
+    };
+
     // Delete dist directory if exist
     if (exists(output_path)) {
       toolbox.loader.start(infoLoader('Deleting previous build directory'));
@@ -79,15 +87,13 @@ const buildCommand: Command = {
     await toolbox.loader.succeed();
 
     // Post copy backend script
-    // ! edit files
     toolbox.loader.start(infoLoader('Running post backend copy script'));
-    await postCopyBackendScript(backend, output_path, hostname, +port, protocol);
+    await postCopyBackendScript(backend, output_path, buildProps);
     await toolbox.loader.succeed();
 
     // Build frontend
-    // ! edit environment
     toolbox.loader.start(infoLoader('Building frontend'));
-    await buildFrontend(frontend);
+    await buildFrontend(frontend, buildProps);
     await toolbox.loader.succeed();
 
     // Copying frontend to dist
@@ -97,7 +103,7 @@ const buildCommand: Command = {
 
     // Post copy frontend script
     toolbox.loader.start(infoLoader('Running post frontend copy script'));
-    await postCopyFrontendScript(frontend, output_path, hostname, +port, protocol);
+    await postCopyFrontendScript(frontend, output_path, buildProps);
     await toolbox.loader.succeed();
 
     // Generate files for manager
@@ -112,10 +118,17 @@ const buildCommand: Command = {
 
     // Print user
     await warn('Your dist folder is ready.');
-    if (manager == 'pm2') {
-      await warn("Don't forget to config your .env and init the database.");
-    } else if (manager == 'docker') {
-      await warn("Don't forget to config your .env and docker-compose.yml and init the database.");
+    switch (manager) {
+      case 'pm2':
+        {
+          await warn("Don't forget to config your .env and init the database.");
+        }
+        break;
+      case 'docker':
+        {
+          await warn("Don't forget to config your .env and docker-compose.yml and init the database.");
+        }
+        break;
     }
   },
 };

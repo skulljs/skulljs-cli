@@ -2,7 +2,20 @@ import { RunOptions, SpawnOpts, SpawnResult } from '@src/types/toolbox/child-pro
 import { execa } from 'execa';
 import nodeSpawn from 'cross-spawn';
 import { isNil } from './utils.js';
-import { SkSystem } from '@src/types/toolbox/system-tools.js';
+import { LocalCli, SkSystem } from '@src/types/toolbox/system-tools.js';
+import { Toolbox } from '../toolbox.js';
+import { RepositorySkJson } from '@src/types/project.js';
+
+function getLocalCli(project: RepositorySkJson, toolbox: Toolbox): LocalCli {
+  const { exit, command, path } = toolbox;
+  const cmdCwd = project.path;
+  if (!project.cli) exit(command, `No cli found for ${project.path} project!`);
+  const cliCmd = path.join(cmdCwd, 'node_modules', project.cli!.path);
+  return {
+    cwd: cmdCwd,
+    cli: cliCmd,
+  };
+}
 
 async function run(commandLine: string, args?: string, options: RunOptions = {}): Promise<string> {
   const trimString = options.trim ? (str: any) => str.trim() : (str: any) => str;
@@ -58,6 +71,7 @@ async function spawn(params: { commandLine: string; args?: string[]; options?: S
 const system: SkSystem = {
   run,
   spawn,
+  getLocalCli,
 };
 
 export { system, SkSystem };

@@ -10,22 +10,29 @@ export async function updateNpmPackage(output_path: string, manager: string, app
   packageJson.license = 'MIT';
   delete packageJson.jest;
 
-  if (manager == 'pm2') {
-    packageJson.scripts = {
-      'pm2:start': 'pm2 start pm2.ecosystem.json',
-      'pm2:stop': 'pm2 stop pm2.ecosystem.json',
-      'pm2:restart': 'pm2 restart pm2.ecosystem.json',
-      'pm2:reload': 'pm2 reload pm2.ecosystem.json',
-      'pm2:delete': 'pm2 delete pm2.ecosystem.json',
-      'pm2:startup': 'pm2 startup',
-      'pm2:save': 'pm2 save',
-    };
-  } else if (manager == 'docker') {
-    packageJson.scripts = {
-      'docker:build': 'docker compose build',
-      'docker:up': 'docker compose up -d',
-      'docker:down': 'docker compose down',
-    };
+  switch (manager) {
+    case 'pm2':
+      {
+        packageJson.scripts = {
+          'pm2:start': 'pm2 start pm2.ecosystem.json',
+          'pm2:stop': 'pm2 stop pm2.ecosystem.json',
+          'pm2:restart': 'pm2 restart pm2.ecosystem.json',
+          'pm2:reload': 'pm2 reload pm2.ecosystem.json',
+          'pm2:delete': 'pm2 delete pm2.ecosystem.json',
+          'pm2:startup': 'pm2 startup',
+          'pm2:save': 'pm2 save',
+        };
+      }
+      break;
+    case 'docker':
+      {
+        packageJson.scripts = {
+          'docker:build': 'docker compose build',
+          'docker:up': 'docker compose up -d',
+          'docker:down': 'docker compose down',
+        };
+      }
+      break;
   }
 
   await fileSystem.writeAsync(`${path.join(output_path, 'package.json')}`, JSON.stringify(packageJson, null, 2));

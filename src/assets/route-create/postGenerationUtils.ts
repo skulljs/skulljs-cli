@@ -1,8 +1,9 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { BackendVariables, FrontendVariables, GenerateProps } from '@src/types/commands/route-create';
 import ts from 'typescript';
-import { nestAppModuleTransformer } from '../fileUpdate/nestAppModuleTransformer.js';
+import { nestAppModuleTransformer } from '../transformers/routes/nest/appModuleRouteImport.js';
 import slash from 'slash';
+import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 
 const { command, saveLog, fileSystem, exit, path } = toolbox;
 
@@ -20,32 +21,35 @@ export async function postGenerationBackendScript(skulljs_repository: string, ba
 
 async function postGenerationNestJsScript(backend_variables: BackendVariables, props: GenerateProps) {
   const app_module_path = path.join(backend_variables.backend_src_folder, 'app.module.ts');
-  if (fileSystem.exists(app_module_path)) {
-    const program = ts.createProgram({
-      options: {
-        target: ts.ScriptTarget.ES2015,
-      },
-      rootNames: [app_module_path],
-    });
 
-    const sourceFile = program.getSourceFile(app_module_path);
+  const program = getTsProgram([
+    {
+      path: app_module_path,
+      sourceName: 'AppModuleSource',
+    },
+  ]);
 
-    if (!sourceFile) return;
-
-    let relativePath = slash(path.relative(path.dirname(app_module_path), path.join(props.backend_route_folder, `${props.route_name_pLf}.module`)));
-    if (!['.', '/'].includes(relativePath[0])) {
-      relativePath = './' + relativePath;
-    }
-
-    const transformationResult = ts.transform(sourceFile, [
-      nestAppModuleTransformer({
-        moduleName: `${props.route_name_pUcfirst}Module`,
-        modulePath: relativePath,
-      }),
-    ]);
-    const transformedSourceFile = transformationResult.transformed[0];
-    await saveLog.write({ target: app_module_path, content: ts.createPrinter().printFile(transformedSourceFile), options: { atomic: true } });
+  let relativePath = slash(path.relative(path.dirname(app_module_path), path.join(props.backend_route_folder, `${props.route_name_pLf}.module`)));
+  if (!['.', '/'].includes(relativePath[0])) {
+    relativePath = './' + relativePath;
   }
+
+  await transformAndWrite(
+    {
+      path: app_module_path,
+      source: program.sourceFiles['AppModuleSource'],
+    },
+    [
+      nestAppModuleTransformer(
+        {
+          moduleName: `${props.route_name_pUcfirst}Module`,
+          modulePath: relativePath,
+        },
+        program.checker
+      ),
+    ],
+    true
+  );
 }
 
 export function postGenerationFrontendScript(skulljs_repository: string, frontend_variables: FrontendVariables, props: GenerateProps) {

@@ -7,3 +7,10 @@ export interface ManagerProps {
   port: number;
   dockerfile_opt_runs: string[];
 }
+
+export interface BuildProps {
+  apiPrefix?: string;
+  port: number;
+  hostname: string;
+  protocol: string;
+}

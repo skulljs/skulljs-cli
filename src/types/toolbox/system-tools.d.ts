@@ -1,4 +1,10 @@
+import { Toolbox } from '@src/toolbox/toolbox';
+import { RepositorySkJson } from '../project';
 import { SpawnOpts, RunOptions, SpawnResult } from './child-process-options';
+export interface LocalCli {
+  cwd: string;
+  cli: string;
+}
 export interface SkSystem {
   /**
    * Uses cross-spawn to run a process.
@@ -18,4 +24,12 @@ export interface SkSystem {
    * @returns Promise with result.
    */
   run(commandLine: string, args?: string, options: RunOptions = {}): Promise<string>;
+
+  /**
+   * Get the local cli of a given project.
+   * @param project The project to get the cli from.
+   * @param toolbox Application toolbox.
+   * @returns LocalCli {cwd,cli}.
+   */
+  getLocalCli(project: RepositorySkJson, toolbox: Toolbox): LocalCli;
 }

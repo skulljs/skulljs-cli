@@ -1,24 +1,9 @@
 import ts, { Identifier, SourceFile } from 'typescript';
-import { hasImport } from './utils.js';
+import { hasImport, isModuleDecorator } from '../../utils.js';
+import { importNode, ModuleProps } from './nodes/importNode.js';
 
-interface ModuleProps {
-  moduleName: string;
-  modulePath: string;
-}
-
-function nestAppModuleTransformer(
-  moduleProps: ModuleProps,
-  typeChecker: ts.TypeChecker | undefined = undefined
-): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
+function nestAppModuleTransformer(moduleProps: ModuleProps, typeChecker: ts.TypeChecker): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
   return (context: ts.TransformationContext) => {
-    function isModuleDecorator(node: ts.Decorator) {
-      const expr = node.expression;
-      if (!ts.isCallExpression(expr)) return false;
-
-      if (!ts.isIdentifier(expr.expression)) return false;
-
-      return expr.expression.escapedText === 'Module';
-    }
     function handleModuleDecorator(node: ts.Decorator) {
       const expr = node.expression;
       if (!ts.isCallExpression(expr)) return node;
@@ -62,18 +47,10 @@ function nestAppModuleTransformer(
       }
     }
 
-    function visitor(node: ts.Node): ts.Node {
+    function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
+      node = ts.visitEachChild(node, visitor, context);
       switch (node.kind) {
         case ts.SyntaxKind.SourceFile: {
-          const importNode = ts.factory.createImportDeclaration(
-            undefined,
-            ts.factory.createImportClause(
-              false,
-              undefined,
-              ts.factory.createNamedImports([ts.factory.createImportSpecifier(false, undefined, ts.factory.createIdentifier(moduleProps.moduleName))])
-            ),
-            ts.factory.createStringLiteral(moduleProps.modulePath, true)
-          );
           const statements = [...(node as SourceFile).statements];
           let newSource = node;
           if (!hasImport(statements, moduleProps.moduleName)) {
@@ -82,20 +59,20 @@ function nestAppModuleTransformer(
                 return s.kind;
               })
               .lastIndexOf(ts.SyntaxKind.ImportDeclaration);
-            statements.splice(lastImport + 1, 0, importNode);
+            statements.splice(lastImport + 1, 0, importNode(moduleProps));
             newSource = ts.factory.updateSourceFile(node as SourceFile, statements);
           }
-          return ts.visitEachChild(newSource, visitor, context);
+          return newSource;
         }
         case ts.SyntaxKind.Decorator: {
           if (isModuleDecorator(node as ts.Decorator)) return handleModuleDecorator(node as ts.Decorator);
         }
         default:
-          return ts.visitEachChild(node, visitor, context);
+          return node;
       }
     }
 
-    return (sf: ts.SourceFile) => visitor(sf) as ts.SourceFile;
+    return (sf: ts.SourceFile) => ts.visitNode(sf, visitor);
   };
 }
 

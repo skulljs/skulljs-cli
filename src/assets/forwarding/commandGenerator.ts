@@ -17,30 +17,33 @@ const generateCliCmd = (cli: CliInfos): Command => {
     ],
     run: async (toolbox, options, args, command) => {
       const {
-        project: { def_content, project_def, backend },
+        project: { def_content },
         exit,
-        path,
-        system: { spawn },
+        system: { spawn, getLocalCli },
       } = toolbox;
       if (def_content) {
         const cliProject = Object.values(def_content?.projects).find((project) => {
           return project.cli?.alias == cli.alias;
         });
+
         if (!cliProject) exit(command, `No ${cli.alias} cli found for currently installed projects !`);
-        const cmdCwd = path.join(path.dirname(project_def!), cliProject?.path!);
-        const cliCmd = path.join(cmdCwd, 'node_modules', cliProject!.cli!.path);
+
+        const localCli = getLocalCli(cliProject!, toolbox);
+
         if (Array.isArray(args[0])) {
-          args[0].unshift(cliCmd);
+          args[0].unshift(localCli.cli);
         }
+
         const results = await spawn({
           commandLine: 'node',
           args: args[0],
           options: {
-            cwd: cmdCwd,
+            cwd: localCli.cwd,
             stdio: ['inherit', 'inherit', 'pipe'],
             shell: true,
           },
         });
+
         if (results.error && results.stderr) {
           exit(command, results.stderr);
         }
