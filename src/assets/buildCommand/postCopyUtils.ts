@@ -1,10 +1,10 @@
 import toolbox from '@src/toolbox/toolbox.js';
 import { RepositorySkJson } from '@src/types/project';
-import { nestMainTransformer } from '../transformers/build/nest/mainHttps.js';
-import { nestMainTransformerLogs } from '../transformers/build/nest/mainLogs.js';
-import { nestAppModuleBuildTransformer } from '../transformers/build/nest/appModuleStatic.js';
+import { nestMainTransformer } from '../transformers/buildCommand/nest/mainHttps.js';
+import { nestMainTransformerLogs } from '../transformers/buildCommand/nest/mainLogs.js';
+import { nestAppModuleBuildTransformer } from '../transformers/buildCommand/nest/appModuleStatic.js';
 import { BuildProps } from '@src/types/commands/build.js';
-import { nestConfigurationTransformer } from '../transformers/build/nest/configuration.js';
+import { nestConfigurationTransformer } from '../transformers/buildCommand/nest/configuration.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 
 const { exit, path } = toolbox;

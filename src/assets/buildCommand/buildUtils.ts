@@ -3,8 +3,8 @@ import { BuildProps } from '@src/types/commands/build';
 import { RepositorySkJson } from '@src/types/project';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 import ts from 'typescript';
-import { ngProdEnvTransformer } from '../transformers/build/angular/prodEnv.js';
-import { getApiPrefix } from '../transformers/build/nest/apiPrefix.js';
+import { ngProdEnvTransformer } from '../transformers/buildCommand/angular/prodEnv.js';
+import { getApiPrefix } from '../transformers/buildCommand/nest/apiPrefix.js';
 
 const { exit, system, path, fileSystem } = toolbox;
 
