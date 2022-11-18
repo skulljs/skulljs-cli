@@ -1,0 +1,11 @@
+import { Injectable } from '@nestjs/common';
+import { Create<%= props.model_name_sUcfirst %>Dto } from './dto/create-<%= props.model_name_sLc %>.dto';
+import { Update<%= props.model_name_sUcfirst %>Dto } from './dto/update-<%= props.model_name_sLc %>.dto';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+@Injectable()
+export class <%= props.route_name_pUcfirst %>Service {
+<%- props.backend_crud_data.service %>
+}

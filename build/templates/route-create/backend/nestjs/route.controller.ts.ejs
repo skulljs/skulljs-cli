@@ -1,0 +1,14 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { <%= props.route_name_pUcfirst %>Service } from './<%= props.route_name_pLf %>.service';
+import { Create<%= props.model_name_sUcfirst %>Dto } from './dto/create-<%= props.model_name_sLc %>.dto';
+import { Update<%= props.model_name_sUcfirst %>Dto } from './dto/update-<%= props.model_name_sLc %>.dto';
+import { <%= props.model_name_sUcfirst %> } from './entities/<%= props.model_name_sLc %>.entity';
+
+@ApiTags('<%= props.route_name_pLf %>')
+@Controller('<%= props.route_name_pLf %>')
+export class <%= props.route_name_pUcfirst %>Controller {
+  constructor(private readonly <%= props.route_name_pLf %>Service: <%= props.route_name_pUcfirst %>Service) {}
+
+<%- props.backend_crud_data.controller %>
+}

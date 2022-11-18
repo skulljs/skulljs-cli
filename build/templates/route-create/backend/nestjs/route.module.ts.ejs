@@ -1,0 +1,9 @@
+import { Module } from '@nestjs/common';
+import { <%= props.route_name_pUcfirst %>Service } from './<%= props.route_name_pLf %>.service';
+import { <%= props.route_name_pUcfirst %>Controller } from './<%= props.route_name_pLf %>.controller';
+
+@Module({
+  controllers: [<%= props.route_name_pUcfirst %>Controller],
+  providers: [<%= props.route_name_pUcfirst %>Service],
+})
+export class <%= props.route_name_pUcfirst %>Module {}

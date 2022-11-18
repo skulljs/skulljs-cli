@@ -1,0 +1,17 @@
+{
+  "projects": { <% if (props.backend_path !=null) { %>
+    "backend": {
+      "path": "<%= props.backend_path %>",
+      "skulljs_repository": "<%= props.backend_repository %>",
+			"cli" : <%- JSON.stringify(props.backend_cli) %>,
+      "version": "<%= props.backend_version %>"
+    }, <% } %> <% if (props.frontend_path !=null) { %>
+    "frontend": {
+      "path": "<%= props.frontend_path %>",
+      "skulljs_repository": "<%= props.frontend_repository %>",
+			"cli" : <%-JSON.stringify(props.frontend_cli) %>,
+      "version": "<%= props.frontend_version %>"
+    } <% } %>
+  },
+	"cli_version": "<%= props.sk_version %>"
+}

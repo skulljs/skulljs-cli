@@ -1,0 +1,4 @@
+import { PartialType } from '@nestjs/swagger';
+import { Create<%= props.model_name_sUcfirst %>Dto } from './create-<%= props.model_name_sLc %>.dto';
+
+export class Update<%= props.model_name_sUcfirst %>Dto extends PartialType(Create<%= props.model_name_sUcfirst %>Dto) {}

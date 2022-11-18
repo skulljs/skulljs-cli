@@ -1,0 +1,18 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { <%= props.route_name_pUcfirst %>Service } from './<%= props.route_name_pLf %>.service';
+
+describe('<%= props.route_name_pUcfirst %>Service', () => {
+  let service: <%= props.route_name_pUcfirst %>Service;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [<%= props.route_name_pUcfirst %>Service],
+    }).compile();
+
+    service = module.get<<%= props.route_name_pUcfirst %>Service>(<%= props.route_name_pUcfirst %>Service);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
