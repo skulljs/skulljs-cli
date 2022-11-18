@@ -1,8 +1,8 @@
-import { buildBackend, buildFrontend } from '@src/assets/buildCommand/buildUtils.js';
-import { copyBackend, copyFrontend } from '@src/assets/buildCommand/copyUtils.js';
-import { generateManagerFiles } from '@src/assets/buildCommand/generateManagerFilesUtils.js';
-import { updateNpmPackage } from '@src/assets/buildCommand/npmPackageUtils.js';
-import { postCopyBackendScript, postCopyFrontendScript } from '@src/assets/buildCommand/postCopyUtils.js';
+import { buildBackend, buildFrontend } from '@src/assets/build/buildUtils.js';
+import { copyBackend, copyFrontend } from '@src/assets/build/copyUtils.js';
+import { generateManagerFiles } from '@src/assets/build/generateManagerFilesUtils.js';
+import { updateNpmPackage } from '@src/assets/build/npmPackageUtils.js';
+import { postCopyBackendScript, postCopyFrontendScript } from '@src/assets/build/postCopyUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
 import { BuildProps } from '@src/types/commands/build';
