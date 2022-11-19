@@ -51,7 +51,7 @@ async function postCopyNestjsScript(backend_path: string, output_path: string, b
         path: mainFile,
         source: program.sourceFiles['MainSource'],
       },
-      [nestMainTransformer(program.checker), nestMainTransformerLogs(program.checker)]
+      [nestMainTransformer({ key: 'xxx-key.pem', cert: 'xxx-cert.pem' }, program.checker), nestMainTransformerLogs(program.checker)]
     );
   }
 

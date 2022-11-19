@@ -1,6 +1,6 @@
 import ts, { AwaitExpression, CallExpression, Identifier, PropertyAccessExpression, SourceFile, VariableDeclaration, VariableStatement } from 'typescript';
 import { hasRequire } from '../../utils.js';
-import { httpOptions } from './nodes/httpOptions.js';
+import { Certificates, httpOptions } from './nodes/httpOptions.js';
 import { httpOptionsParam } from './nodes/httpParam.js';
 import { requireFs } from './nodes/requireFs.js';
 
@@ -9,7 +9,7 @@ interface CreateDeclaration {
   declaration?: VariableDeclaration;
 }
 
-function nestMainTransformer(typeChecker: ts.TypeChecker): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
+function nestMainTransformer(certficates: Certificates, typeChecker: ts.TypeChecker): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
   return (context: ts.TransformationContext) => {
     function visitor(node: ts.Node): ts.VisitResult<ts.Node> {
       node = ts.visitEachChild(node, visitor, context);
@@ -109,7 +109,7 @@ function nestMainTransformer(typeChecker: ts.TypeChecker): (context: ts.Transfor
 
           const newVariableStatement = ts.factory.updateVariableStatement(appVariableStatement, ts.getModifiers(appVariableStatement), newDeclarationList);
 
-          return [httpOptions, newVariableStatement];
+          return [httpOptions(certficates), newVariableStatement];
         }
         case ts.SyntaxKind.ExpressionStatement: {
         }
