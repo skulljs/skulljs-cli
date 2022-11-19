@@ -1,6 +1,6 @@
 import fileWatcher from './watchForFiles.js';
 import updateFileSystem from './updateFileSystem.js';
-import { SkProxyHandler } from '@src/types/toolbox/saveLog/SkProxyHandler';
+import { SkProxyHandler } from '@src/types/toolbox/saveLog/skProxyHandler';
 import { Toolbox } from '../../toolbox.js';
 import { ArgsTypes } from '@src/types/toolbox/saveLog/funcParams';
 import { FsAction } from './fsAction.js';
