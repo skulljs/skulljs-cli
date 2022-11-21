@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0 - Release
+
+- Release of skulljs
+
 ## v0.9.11 - change sslcert
 
 - sslcert -> ranme to xxx.key.pem and xxx.cert.pem
