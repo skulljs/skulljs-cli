@@ -7,7 +7,7 @@ import { BuildProps } from '@src/types/commands/build.js';
 import { nestConfigurationTransformer } from '../transformers/build/nest/configuration.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 
-const { exit, path } = toolbox;
+const { exit, path, fileSystem } = toolbox;
 
 export async function postCopyBackendScript(backend: RepositorySkJson, output_path: string, buildProps: BuildProps) {
   switch (backend.skulljs_repository) {
@@ -46,12 +46,25 @@ async function postCopyNestjsScript(backend_path: string, output_path: string, b
   // If protocol is https transform src/main.js file
 
   if (buildProps.protocol === 'https') {
+    const sslcert_path = path.join(output_path, 'sslcert');
+    const key = await fileSystem.findAsync(sslcert_path, {
+      matching: 'key.pem',
+    });
+    if (key.length != 1) {
+      exit(toolbox.command, 'Found zero or multiple key.pem files, did you put it in the sslcert folder ?');
+    }
+    const cert = await fileSystem.findAsync(sslcert_path, {
+      matching: 'cert.pem',
+    });
+    if (cert.length != 1) {
+      exit(toolbox.command, 'Found zero or multiple cert.pem files, did you put it in the sslcert folder ?');
+    }
     await transformAndWrite(
       {
         path: mainFile,
         source: program.sourceFiles['MainSource'],
       },
-      [nestMainTransformer({ key: 'xxx-key.pem', cert: 'xxx-cert.pem' }, program.checker), nestMainTransformerLogs(program.checker)]
+      [nestMainTransformer({ key: 'key.pem', cert: 'cert.pem' }, program.checker), nestMainTransformerLogs(program.checker)]
     );
   }
 

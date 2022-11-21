@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.9 - improve sk build
+
+- Rename buildCommand to build
+- Add pm2 and docker logs commands for sk build
+- Add MySQL port number for docker sk build
+- sslcert -> rename to key.pem and cert.pem
+
 ## v0.9.8 - sk build
 
 - Add sk build

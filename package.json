@@ -1,6 +1,6 @@
 {
   "name": "@skulljs/cli",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "CLI of skulljs",
   "type": "module",
   "bin": {

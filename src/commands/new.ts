@@ -212,7 +212,7 @@ const newCommand: Command = {
     });
     await toolbox.loader.succeed();
 
-    // Install dependecies
+    // Install dependencies
 
     const cwf = path.join(cwd(), props.name);
 

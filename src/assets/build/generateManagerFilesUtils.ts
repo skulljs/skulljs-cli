@@ -22,7 +22,7 @@ async function generateNestJsManagerFiles(output_path: string, manager: string, 
     case 'pm2':
       {
         await template.generate({
-          template: 'buildCommand/pm2/pm2.ecosystem.json.ejs',
+          template: 'build/pm2/pm2.ecosystem.json.ejs',
           target: `${output_path}/pm2.ecosystem.json.ejs`.replace('.ejs', ''),
           props: props,
         });
@@ -31,17 +31,17 @@ async function generateNestJsManagerFiles(output_path: string, manager: string, 
     case 'docker':
       {
         await template.generate({
-          template: 'buildCommand/docker/.dockerignore.ejs',
+          template: 'build/docker/.dockerignore.ejs',
           target: `${output_path}/.dockerignore.ejs`.replace('.ejs', ''),
           props: props,
         });
         await template.generate({
-          template: 'buildCommand/docker/docker-compose.yml.ejs',
+          template: 'build/docker/docker-compose.yml.ejs',
           target: `${output_path}/docker-compose.yml.ejs`.replace('.ejs', ''),
           props: props,
         });
         await template.generate({
-          template: 'buildCommand/docker/Dockerfile.ejs',
+          template: 'build/docker/Dockerfile.ejs',
           target: `${output_path}/Dockerfile.ejs`.replace('.ejs', ''),
           props: props,
         });

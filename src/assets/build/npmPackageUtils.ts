@@ -19,6 +19,7 @@ export async function updateNpmPackage(output_path: string, manager: string, app
           'pm2:restart': 'pm2 restart pm2.ecosystem.json',
           'pm2:reload': 'pm2 reload pm2.ecosystem.json',
           'pm2:delete': 'pm2 delete pm2.ecosystem.json',
+          'pm2:logs': `pm2 logs ${app_name}`,
           'pm2:startup': 'pm2 startup',
           'pm2:save': 'pm2 save',
         };
@@ -30,6 +31,7 @@ export async function updateNpmPackage(output_path: string, manager: string, app
           'docker:build': 'docker compose build',
           'docker:up': 'docker compose up -d',
           'docker:down': 'docker compose down',
+          'docker:logs': 'docker compose logs',
         };
       }
       break;
