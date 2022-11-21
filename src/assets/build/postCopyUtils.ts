@@ -47,24 +47,26 @@ async function postCopyNestjsScript(backend_path: string, output_path: string, b
 
   if (buildProps.protocol === 'https') {
     const sslcert_path = path.join(output_path, 'sslcert');
-    const key = await fileSystem.findAsync(sslcert_path, {
-      matching: 'key.pem',
+    const key_array = await fileSystem.findAsync(sslcert_path, {
+      matching: '*.key.pem',
     });
-    if (key.length != 1) {
+    if (key_array.length != 1) {
       exit(toolbox.command, 'Found zero or multiple key.pem files, did you put it in the sslcert folder ?');
     }
-    const cert = await fileSystem.findAsync(sslcert_path, {
-      matching: 'cert.pem',
+    const key = path.basename(key_array[0]);
+    const cert_array = await fileSystem.findAsync(sslcert_path, {
+      matching: '*.cert.pem',
     });
-    if (cert.length != 1) {
+    if (cert_array.length != 1) {
       exit(toolbox.command, 'Found zero or multiple cert.pem files, did you put it in the sslcert folder ?');
     }
+    const cert = path.basename(cert_array[0]);
     await transformAndWrite(
       {
         path: mainFile,
         source: program.sourceFiles['MainSource'],
       },
-      [nestMainTransformer({ key: 'key.pem', cert: 'cert.pem' }, program.checker), nestMainTransformerLogs(program.checker)]
+      [nestMainTransformer({ key: key, cert: cert }, program.checker), nestMainTransformerLogs(program.checker)]
     );
   }
 
