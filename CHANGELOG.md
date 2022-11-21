@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1 - Fix sk doc description
+
+- Fix sk doc description
+
 ## v1.0.0 - Release
 
 - Release of skulljs

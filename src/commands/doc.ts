@@ -5,7 +5,7 @@ import { RepositorySkJson } from '@src/types/project';
 const docCommand: Command = {
   name: 'doc',
   scope: 'in',
-  description: 'Build the documentation for the frontend',
+  description: 'Build the documentation',
   run: async (toolbox, options, args) => {
     const {
       print: { infoLoader, warn },
