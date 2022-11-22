@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.1 - sk prisma
+
+- Add sk prisma
+- Updated error display when checking the cwd of the cli
+
 ## v1.1.0 - Prisma client api abstraction
 
 - Change sk route:create for prisma client api abstraction
