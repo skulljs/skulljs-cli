@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0 - Prisma client api abstraction
+
+- Change sk route:create for prisma client api abstraction
+
 ## v1.0.1 - Fix sk doc description
 
 - Fix sk doc description

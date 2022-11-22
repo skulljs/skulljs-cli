@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { <%= props.route_name_pUcfirst %>Service } from './<%= props.route_name_pLf %>.service';
 import { <%= props.route_name_pUcfirst %>Controller } from './<%= props.route_name_pLf %>.controller';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
   controllers: [<%= props.route_name_pUcfirst %>Controller],
-  providers: [<%= props.route_name_pUcfirst %>Service],
+  providers: [<%= props.route_name_pUcfirst %>Service, PrismaService],
 })
 export class <%= props.route_name_pUcfirst %>Module {}
