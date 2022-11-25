@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1.1 - sk prisma
+## v1.2.0 - sk prisma
 
 - Add sk prisma
 - Updated error display when checking the cwd of the cli
