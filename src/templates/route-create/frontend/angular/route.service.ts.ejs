@@ -10,7 +10,7 @@ import { <%= props.model_name_sUcfirst %> } from './entities/<%= props.model_nam
   providedIn: 'root',
 })
 export class <%= props.route_name_pUcfirst %>Service {
-  baseurl: string = `${environment.backend_url}/<%= props.route_name_pLf %>`;
+  baseurl = `${environment.backend_url}/<%= props.route_name_pLf %>`;
 
   constructor(private http: HttpClient) {}
 
