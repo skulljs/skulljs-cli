@@ -1,4 +1,4 @@
-# [skulljs] [1.2.0] skulljs-cli
+# [skulljs] [1.2.1] skulljs-cli
 
 CLI of skulljs
 
@@ -12,11 +12,11 @@ See [CHANGELOG.md](CHANGELOG.md)
 
 ## Author(s)
 
-* **Florent SIMONET** _alias_ [@SFlorent](https://github.com/SFlorent)
-* **Sébastien FOUCHEUR** _alias_ [@Sfoucheur](https://github.com/Sfoucheur)
+- **Florent SIMONET** _alias_ [@SFlorent](https://github.com/SFlorent)
+- **Sébastien FOUCHEUR** _alias_ [@Sfoucheur](https://github.com/Sfoucheur)
 
 ## Licence
 
-This project is under ``MIT License`` - see [LICENSE.md](LICENSE.md) for more informations
+This project is under `MIT License` - see [LICENSE.md](LICENSE.md) for more informations
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

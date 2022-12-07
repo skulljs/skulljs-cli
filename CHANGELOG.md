@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.1 - Fix forwarding commands
+
+- Fix System Tools - getLocalCli : output the right cwd and cli command
+- Fix Forwarding - Use the right project definitions and add better error handling when spawning childprocess
+
 ## v1.2.0 - sk prisma
 
 - Add sk prisma

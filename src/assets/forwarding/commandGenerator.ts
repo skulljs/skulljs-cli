@@ -17,36 +17,39 @@ const generateCliCmd = (cli: CliInfos): Command => {
     ],
     run: async (toolbox, options, args, command) => {
       const {
-        project: { def_content },
+        project: { backend, frontend },
         exit,
         system: { spawn, getLocalCli },
       } = toolbox;
-      if (def_content) {
-        const cliProject = Object.values(def_content?.projects).find((project) => {
-          return project.cli?.alias == cli.alias;
-        });
 
-        if (!cliProject) exit(command, `No ${cli.alias} cli found for currently installed projects !`);
+      if (!backend && !frontend) exit(command, 'No projects found ! ');
 
-        const localCli = getLocalCli(cliProject!, toolbox);
+      const cliProject = Object.values([backend, frontend]).find((project) => {
+        return project?.cli?.alias == cli.alias;
+      });
 
-        if (Array.isArray(args[0])) {
-          args[0].unshift(localCli.cli);
-        }
+      if (!cliProject) exit(command, `No ${cli.alias} cli found for currently installed projects !`);
 
-        const results = await spawn({
-          commandLine: 'node',
-          args: args[0],
-          options: {
-            cwd: localCli.cwd,
-            stdio: ['inherit', 'inherit', 'pipe'],
-            shell: true,
-          },
-        });
+      const localCli = getLocalCli(cliProject!, toolbox);
 
-        if (results.error && results.stderr) {
+      if (Array.isArray(args[0])) {
+        args[0].unshift(localCli.cli);
+      }
+
+      const results = await spawn({
+        commandLine: 'node',
+        args: args[0],
+        options: {
+          cwd: localCli.cwd,
+          stdio: ['inherit', 'inherit', 'pipe'],
+          shell: true,
+        },
+      });
+      if (results.error) {
+        if (results.stderr) {
           exit(command, results.stderr);
         }
+        exit(command, results.error.stack ?? 'Unknown spawn error');
       }
     },
   };
