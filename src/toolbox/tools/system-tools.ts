@@ -9,8 +9,11 @@ import { RepositorySkJson } from '@src/types/project.js';
 function getLocalCli(project: RepositorySkJson, toolbox: Toolbox): LocalCli {
   const { exit, command, path } = toolbox;
   const cmdCwd = project.path;
+
   if (!project.cli) exit(command, `No cli found for ${project.path} project!`);
-  const cliCmd = path.join(cmdCwd, 'node_modules', project.cli!.path);
+
+  const cliCmd = path.join('node_modules', project.cli!.path);
+
   return {
     cwd: cmdCwd,
     cli: cliCmd,
