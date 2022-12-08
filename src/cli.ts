@@ -9,7 +9,7 @@ import errorsHandler from '@src/runtime/exit-handler.js';
 import setCommand from '@src/runtime/set-command.js';
 import '@src/utils/arrayExtensions.js';
 import repositories from './assets/repositories.js';
-import { generateCliCmd } from './assets/forwarding/commandGenerator.js';
+import { generateCliCmd } from './assets/forwarding/cliCmdGenerator.js';
 import { EOL } from 'node:os';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
