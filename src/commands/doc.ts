@@ -1,6 +1,5 @@
-import { generateBackendDoc, generateFrontendDoc } from '@src/assets/doc/generateDocUtils.js';
+import { DocFactory } from '@src/assets/doc/docFactory.js';
 import { Command } from '@src/types/command';
-import { RepositorySkJson } from '@src/types/project';
 
 const docCommand: Command = {
   name: 'doc',
@@ -25,15 +24,17 @@ const docCommand: Command = {
 
     // Generating backend documentation
     if (documentation_choice == 'all' || documentation_choice == 'backend') {
+      const backendUtils = DocFactory.getProject(backend!.skulljs_repository);
       toolbox.loader.start(infoLoader('Generating backend documentation'));
-      await generateBackendDoc(backend as RepositorySkJson);
+      await backendUtils.generateDoc(backend!);
       await toolbox.loader.succeed();
     }
 
     // Generating frontend documentation
     if (documentation_choice == 'all' || documentation_choice == 'frontend') {
+      const frontendUtils = DocFactory.getProject(frontend!.skulljs_repository);
       toolbox.loader.start(infoLoader('Generating frontend documentation'));
-      await generateFrontendDoc(frontend as RepositorySkJson);
+      await frontendUtils.generateDoc(frontend!);
       await toolbox.loader.succeed();
     }
 

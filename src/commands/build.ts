@@ -1,11 +1,8 @@
-import { buildBackend, buildFrontend } from '@src/assets/build/buildUtils.js';
-import { copyBackend, copyFrontend } from '@src/assets/build/copyUtils.js';
-import { generateManagerFiles } from '@src/assets/build/generateManagerFilesUtils.js';
 import { updateNpmPackage } from '@src/assets/build/npmPackageUtils.js';
-import { postCopyBackendScript, postCopyFrontendScript } from '@src/assets/build/postCopyUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
 import { BuildProps } from '@src/types/commands/build';
+import { BuildFactory } from '@src/assets/build/buildFactory.js';
 
 const buildCommand: Command = {
   name: 'build',
@@ -75,39 +72,42 @@ const buildCommand: Command = {
       await toolbox.loader.succeed();
     }
 
+    const backendUtils = BuildFactory.getProject(backend.skulljs_repository);
+    const frontendUtils = BuildFactory.getProject(frontend.skulljs_repository);
+
     // Build backend
     toolbox.loader.start(infoLoader('Building backend'));
-    await buildBackend(backend);
+    await backendUtils.build(backend);
     await toolbox.loader.succeed();
 
     // Copying backend to dist
     toolbox.loader.start(infoLoader('Copying backend to dist'));
-    await copyBackend(backend, output_path, protocol);
+    await backendUtils.copyFiles(backend, output_path, protocol);
     await toolbox.loader.succeed();
 
     // Post copy backend script
     toolbox.loader.start(infoLoader('Running post backend copy script'));
-    await postCopyBackendScript(backend, output_path, buildProps);
+    await backendUtils.postCopyScript(backend, output_path, buildProps);
     await toolbox.loader.succeed();
 
     // Build frontend
     toolbox.loader.start(infoLoader('Building frontend'));
-    await buildFrontend(frontend, buildProps);
+    await frontendUtils.build(frontend, buildProps);
     await toolbox.loader.succeed();
 
     // Copying frontend to dist
     toolbox.loader.start(infoLoader('Copying frontend to dist'));
-    await copyFrontend(frontend, output_path);
+    await frontendUtils.copyFiles(frontend, output_path);
     await toolbox.loader.succeed();
 
     // Post copy frontend script
     toolbox.loader.start(infoLoader('Running post frontend copy script'));
-    await postCopyFrontendScript(frontend, output_path, buildProps);
+    await frontendUtils.postCopyScript(frontend, output_path, buildProps);
     await toolbox.loader.succeed();
 
     // Generate files for manager
     toolbox.loader.start(infoLoader(`Generating files for manager: ${manager}`));
-    await generateManagerFiles(backend, output_path, manager, app_name, +port);
+    await backendUtils.generateManagerFiles(output_path, manager, app_name, +port);
     await toolbox.loader.succeed();
 
     // Update npm scripts

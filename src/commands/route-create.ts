@@ -1,7 +1,7 @@
 import { Command } from '@src/types/command';
 import { ProjectUse, RepositorySkJson } from '@src/types/project';
 import { FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-create';
-import { ProjectFactory } from '@src/assets/route-create/projectFactory.js';
+import { RouteFactory } from '@src/assets/route-create/routeFactory.js';
 
 const routeCreateCommand: Command = {
   name: 'route:create',
@@ -64,11 +64,12 @@ const routeCreateCommand: Command = {
       );
     }
 
+    const backendUtils = RouteFactory.getProject(backend.skulljs_repository);
+    const frontendUtils = frontend ? RouteFactory.getProject(frontend.skulljs_repository) : undefined;
+
     // variables declarations
-    const backend_variables = ProjectFactory.getProject(backend.skulljs_repository).getVariables(backend, route_path);
-    const frontend_variables = frontend
-      ? ProjectFactory.getProject(frontend.skulljs_repository).getVariables(frontend, backend_variables.backend_route_folder)
-      : null;
+    const backend_variables = backendUtils.getVariables(backend, route_path);
+    const frontend_variables = frontendUtils?.getVariables(frontend!, backend_variables.backend_route_folder);
 
     // Check if route already exist
     if (exists(backend_variables.backend_route_folder)) {
@@ -84,7 +85,7 @@ const routeCreateCommand: Command = {
       exit(command, ['Unable to locate models file.', `Path: ${backend_variables.database_models_file}`]);
     }
 
-    const models: PromptsModels[] = ProjectFactory.getProject(backend.skulljs_repository).getAllModels(backend_variables.database_models_file);
+    const models: PromptsModels[] = backendUtils.getAllModels(backend_variables.database_models_file);
 
     // ask user
 
@@ -118,7 +119,7 @@ const routeCreateCommand: Command = {
     // add files
     toolbox.loader.start(infoLoader('Generating files'));
 
-    const model = ProjectFactory.getProject(backend.skulljs_repository).getModel(backend_variables.database_models_file, selected_model);
+    const model = backendUtils.getModel(backend_variables.database_models_file, selected_model);
     let model_id = '';
     let model_id_type = '';
     model.properties.forEach((property) => {
@@ -148,10 +149,10 @@ const routeCreateCommand: Command = {
       frontend_crud_data: null,
       model: model,
     };
-    props.backend_crud_data = await ProjectFactory.getProject(backend.skulljs_repository).getCRUD(props);
+    props.backend_crud_data = await backendUtils.getCRUD(props);
 
     // backend
-    const backendFilesToGenerates: FileToGenerate[] = ProjectFactory.getProject(backend.skulljs_repository).getFiles(props);
+    const backendFilesToGenerates: FileToGenerate[] = backendUtils.getFiles(props);
     await Promise.all(
       backendFilesToGenerates.map(async (file) => {
         await saveLog.generate({
@@ -164,8 +165,8 @@ const routeCreateCommand: Command = {
 
     // frontend
     if (createService) {
-      props.frontend_crud_data = await ProjectFactory.getProject((frontend as RepositorySkJson).skulljs_repository).getCRUD(props);
-      const frontendFilesToGenerates: FileToGenerate[] = ProjectFactory.getProject((frontend as RepositorySkJson).skulljs_repository).getFiles(props);
+      props.frontend_crud_data = await frontendUtils!.getCRUD(props);
+      const frontendFilesToGenerates: FileToGenerate[] = frontendUtils!.getFiles(props);
       await Promise.all(
         frontendFilesToGenerates.map(async (file) => {
           await saveLog.generate({
@@ -181,9 +182,9 @@ const routeCreateCommand: Command = {
 
     // post generation script
     toolbox.loader.start(infoLoader('Running post generation script'));
-    await ProjectFactory.getProject(backend.skulljs_repository).postGeneration(backend_variables, props);
+    await backendUtils.postGeneration(backend_variables, props);
     if (frontend) {
-      await ProjectFactory.getProject(frontend.skulljs_repository).postGeneration(frontend_variables, props);
+      await frontendUtils!.postGeneration(frontend_variables, props);
     }
     await toolbox.loader.succeed();
   },

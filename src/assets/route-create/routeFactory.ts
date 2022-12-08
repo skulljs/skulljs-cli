@@ -18,7 +18,7 @@ const Store: StoreObject = {
   Angular,
 };
 
-export class ProjectFactory {
+export class RouteFactory {
   static getProject(repository: string) {
     repository = upperFirst(repository);
     if (Store[repository] === undefined || Store[repository] === null) {

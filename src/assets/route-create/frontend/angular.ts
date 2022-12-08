@@ -1,8 +1,8 @@
 import { CRUDDataAngular, FileToGenerate, FrontendVariables, GenerateProps } from '@src/types/commands/route-create';
 import { RouteCreateUtils } from '../routeCreateUtils.js';
+import { RepositorySkJson } from '@src/types/project';
 import asyncForEach from '@src/utils/asyncForEach.js';
 import toolbox from '@src/toolbox/toolbox.js';
-import { RepositorySkJson } from '@src/types/project';
 
 const { template, path } = toolbox;
 

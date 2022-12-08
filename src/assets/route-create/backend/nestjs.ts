@@ -10,12 +10,12 @@ import {
 import { RouteCreateUtils } from '../routeCreateUtils.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 import { nestAppModuleTransformer } from '@src/assets/transformers/routes/nest/appModuleRouteImport.js';
-import asyncForEach from '@src/utils/asyncForEach.js';
-import toolbox from '@src/toolbox/toolbox.js';
-import slash from 'slash';
 import { parsePrismaSchema } from '@loancrate/prisma-schema-parser';
 import { convertPrisma } from '../databaseConvert.js';
 import { RepositorySkJson } from '@src/types/project';
+import asyncForEach from '@src/utils/asyncForEach.js';
+import toolbox from '@src/toolbox/toolbox.js';
+import slash from 'slash';
 
 const {
   strings: { upperFirst, lowerCase, plural },
