@@ -33,8 +33,11 @@ const prismaCommand: Command = {
       },
     });
 
-    if (results.error && results.stderr) {
-      exit(command, results.stderr);
+    if (results.error) {
+      if (results.stderr) {
+        exit(command, results.stderr);
+      }
+      exit(command, results.error.stack ?? 'Unknown spawn error');
     }
   },
 };

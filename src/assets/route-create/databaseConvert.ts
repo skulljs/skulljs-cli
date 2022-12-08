@@ -1,24 +1,8 @@
-import toolbox from '@src/toolbox/toolbox.js';
+import { FieldDeclaration, ListType } from '@loancrate/prisma-schema-parser';
 import { ConvertMatrix } from '@src/types/commands/route-create';
 
-const { exit } = toolbox;
-
-export function convertDatabaseTypeToTsType(skulljs_repository: string, type: string): string {
-  let converted_type = '';
-  switch (skulljs_repository) {
-    case 'nestjs':
-      converted_type = convertPrisma(type);
-      break;
-
-    default:
-      exit(toolbox.command, `backend repository ${skulljs_repository} not implemented yet !`);
-      break;
-  }
-  return converted_type;
-}
-
-function convertPrisma(type: string) {
-  let converted_type = '';
+function convertPrisma(modelField: FieldDeclaration) {
+  let converted_type = 'string';
 
   const prisma_convert_matrix: ConvertMatrix = {
     number: ['Int', 'BigInt', 'Float', 'Decimal'],
@@ -27,20 +11,33 @@ function convertPrisma(type: string) {
     object: ['Json'],
   };
 
-  let found = false;
-  for (let prisma_type in prisma_convert_matrix) {
-    if (prisma_convert_matrix[prisma_type as keyof ConvertMatrix].includes(type)) {
-      converted_type = prisma_type;
-      found = true;
-      break;
+  function getPrismaModelPropertyType(property: FieldDeclaration) {
+    const propertyType = property.type;
+    switch (propertyType.kind) {
+      case 'typeId':
+        return propertyType.name.value;
+      case 'unsupported':
+        return propertyType.type.value;
+      default:
+        const baseType = propertyType.type;
+        switch (baseType.kind) {
+          case 'typeId':
+            return baseType.name.value;
+          case 'unsupported':
+            return baseType.type.value;
+        }
     }
   }
 
-  if (!found) {
-    converted_type = 'string';
-  }
+  const type = getPrismaModelPropertyType(modelField);
+
+  Object.keys(prisma_convert_matrix).some((prismaType) => {
+    if (!prisma_convert_matrix[prismaType as keyof ConvertMatrix].includes(type)) return false;
+    converted_type = prismaType;
+    return true;
+  });
 
   return converted_type;
 }
 
-export default { convertDatabaseTypeToTsType };
+export { convertPrisma };
