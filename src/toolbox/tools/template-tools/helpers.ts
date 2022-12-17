@@ -44,8 +44,14 @@ export function registerHelpers(toolbox: Toolbox) {
     return path.basename(options.hash.path);
   });
 
-  Handlebars.registerHelper('concat', function (...strings: any[]) {
-    return strings.slice(0, -1).reduce((result, string) => result + string, '');
+  Handlebars.registerHelper('concat', function (this: any, ...strings: any[]) {
+    return strings.slice(0, -1).reduce((result, string) => {
+      if (string instanceof Function) string = string.call(this);
+
+      if (!(string instanceof String)) throw new Error(`concat only accepts strings or functions that returns strings`);
+
+      return result + string;
+    }, '');
   });
 
   Handlebars.registerHelper('stringify', function (object: any) {
@@ -53,6 +59,10 @@ export function registerHelpers(toolbox: Toolbox) {
   });
 
   Handlebars.registerHelper('eq', function (this: any, value: any, equals: any, options: Handlebars.HelperOptions) {
+    if (arguments.length > 3) {
+      throw new Error('eq requires exactly two arguments !');
+    }
+
     if (value instanceof Function) {
       value = value.call(this);
     }
