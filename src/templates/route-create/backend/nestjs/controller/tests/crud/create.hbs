@@ -1,0 +1,8 @@
+describe('Create', () => {
+    it('should return a new {{{props.model_name_sUcfirst }}}', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      expect(controller.create(mockCreate{{{ props.model_name_sUcfirst }}})).resolves.toBe(mock{{{ props.model_name_sUcfirst }}});
+      expect(createSpy).toHaveBeenCalledTimes(1);
+      expect(createSpy).toHaveBeenCalledWith(mockCreate{{{ props.model_name_sUcfirst }}});
+    });
+});

@@ -1,0 +1,45 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { {{{ props.route_name_pUcfirst }}}Controller } from './{{{ props.route_name_pLf }}}.controller';
+import { {{{ props.route_name_pUcfirst }}}Service } from './{{{ props.route_name_pLf }}}.service';
+import { Create{{{props.model_name_sUcfirst}}}Dto } from './dto/create-{{{props.model_name_sLc}}}.dto';
+import { Update{{{props.model_name_sUcfirst}}}Dto } from './dto/update-{{{props.model_name_sLc}}}.dto';
+import { {{{props.model_name_sUcfirst}}} } from './entities/{{{props.model_name_sLc}}}.entity';
+
+{{> (getPartial path='../../dto/mock/mockEntity') .}}
+
+{{> (getPartial path='../../dto/mock/mockCreate') .}}
+
+{{> (getPartial path='../../dto/mock/mockUpdate') .}}
+
+{{> (getPartial path='../../dto/mock/mockEntities') .}}
+
+const {{{ props.model_name_pLc}}}ServiceMock = {
+  findAll: jest.fn(() => Promise.resolve(mock{{{props.model_name_pUcfirst}}})),
+  create: jest.fn((createData: Create{{{ props.model_name_sUcfirst }}}Dto) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+  update: jest.fn((id: number, updateData: Update{{{ props.model_name_sUcfirst }}}Dto) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+  findOne: jest.fn((id: number) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+  remove: jest.fn((id: number) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+};
+
+describe('{{{ props.route_name_pUcfirst }}}Controller', () => {
+  let controller: {{{ props.route_name_pUcfirst }}}Controller;
+	let service: {{{ props.route_name_pUcfirst }}}Service;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [{{{ props.route_name_pUcfirst }}}Controller],
+      providers: [{
+				provide: {{{ props.route_name_pUcfirst }}}Service,
+				useValue: {{{props.model_name_pLc}}}ServiceMock,
+			}],
+    }).compile();
+
+    controller = module.get<{{{ props.route_name_pUcfirst }}}Controller>({{{ props.route_name_pUcfirst }}}Controller);
+		service = module.get<{{{ props.route_name_pUcfirst }}}Service>({{{ props.route_name_pUcfirst }}}Service);
+  });
+	{{#each props.crud }}
+
+	{{> (getPartial path=(concat 'crud/' this)) ..}}
+	{{/each}}
+
+});

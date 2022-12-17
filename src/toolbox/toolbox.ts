@@ -11,7 +11,7 @@ import { print } from '@src/toolbox/tools/print-tools.js';
 import { buildLoader } from '@src/toolbox/tools/loader-tools/worker.js';
 import { fileSystem } from '@src/toolbox/tools/filesystem-tools.js';
 import { strings } from '@src/toolbox/tools/strings-tools.js';
-import { buildTemplate } from '@src/toolbox/tools/template-tools.js';
+import { buildTemplate } from '@src/toolbox/tools/template-tools/template-tools.js';
 import { system } from '@src/toolbox/tools/system-tools.js';
 import { buildSave } from '@src/toolbox/tools/saveLog-tools/saveMethods.js';
 import { patching } from '@src/toolbox/tools/patching-tools.js';

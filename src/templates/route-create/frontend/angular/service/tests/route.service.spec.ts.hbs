@@ -1,0 +1,20 @@
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { defer } from "rxjs";
+import { {{{props.model_name_sUcfirst}}} } from './entities/{{{props.model_name_sLc}}}.entity';
+import { {{{props.route_name_pUcfirst}}}Service } from "./{{{props.route_name_pLf}}}.service";
+
+describe("{{{route_name_pUcfirst}}}Service", () => {
+	let httpClientSpy: jasmine.SpyObj<HttpClient>;
+	let {{{props.route_name_pLf}}}Service: {{{props.route_name_pUcfirst}}}Service;
+
+	beforeEach(() => {
+		httpClientSpy = jasmine.createSpyObj("HttpClient", ["get", "post", "delete", "put"]);
+		{{{props.route_name_pLf}}}Service = new {{{props.route_name_pUcfirst}}}Service(httpClientSpy);
+	});
+	{{#each props.crud }}
+
+	{{> (getPartial path=(concat 'crud/' this)) ..}}
+	
+	{{/each}}
+
+});

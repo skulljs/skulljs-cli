@@ -1,0 +1,5 @@
+@Post()
+@ApiOkResponse({ type: {{ props.model_name_sUcfirst}} })
+create(@Body() create{{ props.model_name_sUcfirst}}Dto: Create{{ props.model_name_sUcfirst}}Dto) {
+	return this.{{ props.route_name_pLf}}Service.create(create{{ props.model_name_sUcfirst}}Dto);
+}

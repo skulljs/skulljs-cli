@@ -1,0 +1,3 @@
+remove({{{ props.model_id }}}: {{{ props.model_id_type }}}): Promise<{{{ props.model_name_sUcfirst }}}> {
+	return lastValueFrom(this.http.delete(`${this.baseurl}/${ {{~{ props.model_id }~}} }`, this.httpOptions)) as Promise<{{{ props.model_name_sUcfirst }}}>;
+}

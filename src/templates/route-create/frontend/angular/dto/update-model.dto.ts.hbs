@@ -1,0 +1,7 @@
+export interface Update{{{props.model_name_sUcfirst}}}Dto {
+{{#each props.model.properties}}
+  {{#unless this.isId}}
+  {{{this.name}}}?: {{{this.type}}}
+  {{/unless}}
+{{/each}}
+}

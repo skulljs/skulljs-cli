@@ -1,0 +1,17 @@
+describe('FindAll', () => {
+	it('should return an array of {{{props.model_name_pLc}}}', async () => {
+		const findManySpy = jest.spyOn(prisma.{{{props.model_name_pLc}}}, 'findMany');
+		expect(service.findAll()).resolves.toBe(mock{{{props.model_name_pUcfirst}}});
+		expect(findManySpy).toHaveBeenCalledTimes(1);
+		expect(findManySpy).toHaveBeenCalledWith();
+	});
+});
+
+describe('FindOne', () => {
+	it('should return a {{{props.model_name_sUcfirst}}}', async () => {
+		const findOneSpy = jest.spyOn(prisma.{{{props.model_name_pLc}}}, 'findUnique');
+		expect(service.findOne(1)).resolves.toBe(mock{{{props.model_name_sUcfirst}}});
+		expect(findOneSpy).toHaveBeenCalledTimes(1);
+		expect(findOneSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+	});
+});

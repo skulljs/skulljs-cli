@@ -1,0 +1,5 @@
+export interface Create{{{ props.model_name_sUcfirst }}}Dto {
+{{#each props.model.properties }}
+	{{{this.name}}}{{#if this.id_id}}?{{/if}}: {{{this.type}}}
+{{/each}}
+}

@@ -87,7 +87,7 @@ const routeCreateCommand: Command = {
 
     const models: PromptsModels[] = backendUtils.getAllModels(backend_variables.database_models_file);
 
-    // ask user
+    // Ask user
 
     const route_name = route_path.split('/').pop()!;
     const selected_model = await prompts.select('Select a model', models);
@@ -114,7 +114,7 @@ const routeCreateCommand: Command = {
       },
     ];
     const crud = await prompts.multiSelect('CRUD', crud_choices);
-    const createService = !service || !frontend ? false : await prompts.confirm('Create the associate service ?', true);
+    const createService = !service || !frontend ? false : await prompts.confirm('Create the associated service ?', true);
 
     // add files
     toolbox.loader.start(infoLoader('Generating files'));
@@ -123,9 +123,9 @@ const routeCreateCommand: Command = {
     let model_id = '';
     let model_id_type = '';
     model.properties.forEach((property) => {
-      if (property.is_id) {
-        model_id = property.property_name;
-        model_id_type = property.property_type;
+      if (property.isId) {
+        model_id = property.name;
+        model_id_type = property.type;
       }
     });
 
@@ -145,11 +145,8 @@ const routeCreateCommand: Command = {
       model_id: model_id,
       model_id_type: model_id_type,
       crud: crud,
-      backend_crud_data: null,
-      frontend_crud_data: null,
       model: model,
     };
-    props.backend_crud_data = await backendUtils.getCRUD(props);
 
     // backend
     const backendFilesToGenerates: FileToGenerate[] = backendUtils.getFiles(props);
@@ -165,7 +162,6 @@ const routeCreateCommand: Command = {
 
     // frontend
     if (createService) {
-      props.frontend_crud_data = await frontendUtils!.getCRUD(props);
       const frontendFilesToGenerates: FileToGenerate[] = frontendUtils!.getFiles(props);
       await Promise.all(
         frontendFilesToGenerates.map(async (file) => {

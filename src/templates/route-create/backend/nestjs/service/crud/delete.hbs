@@ -1,0 +1,3 @@
+remove({{{ props.model_id }}}: {{{ props.model_id_type }}}) {
+	return this.prisma.{{{ props.model_name_Lc }}}.delete({ where: { {{{ props.model_id }}}  } });
+}

@@ -1,19 +1,10 @@
-import {
-  BackendVariables,
-  CRUDDataNestjs,
-  DatabaseModel,
-  DatabaseModelProperty,
-  FileToGenerate,
-  GenerateProps,
-  PromptsModels,
-} from '@src/types/commands/route-create.js';
+import { BackendVariables, DatabaseModel, DatabaseModelProperty, FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-create.js';
 import { RouteCreateUtils } from '../routeCreateUtils.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 import { nestAppModuleTransformer } from '@src/assets/transformers/routes/nest/appModuleRouteImport.js';
 import { parsePrismaSchema } from '@loancrate/prisma-schema-parser';
 import { convertPrisma } from '../databaseConvert.js';
 import { RepositorySkJson } from '@src/types/project';
-import asyncForEach from '@src/utils/asyncForEach.js';
 import toolbox from '@src/toolbox/toolbox.js';
 import slash from 'slash';
 
@@ -24,7 +15,7 @@ const {
   template,
 } = toolbox;
 
-export class Nestjs extends RouteCreateUtils<CRUDDataNestjs, BackendVariables> {
+export class Nestjs extends RouteCreateUtils<BackendVariables> {
   getVariables(repository: RepositorySkJson, route_path: string): BackendVariables {
     const backend_src_folder = path.join(repository.path, 'src/');
     const backend_routes_folder = path.join(backend_src_folder, 'routes');
@@ -48,8 +39,8 @@ export class Nestjs extends RouteCreateUtils<CRUDDataNestjs, BackendVariables> {
   }
 
   getModel(database_models_file: string, model_name: string): DatabaseModel {
-    const model: DatabaseModel = { model_name: '', properties: [], model_class_validator: '' };
-    const class_validator: string[] = [];
+    const model: DatabaseModel = { model_name: '', properties: [], model_classValidator: '' };
+    const classValidator: string[] = [];
     const schema = parsePrismaSchema(read(database_models_file) ?? '');
     schema.declarations.forEach((declaration) => {
       if (declaration.kind != 'model') return;
@@ -72,19 +63,19 @@ export class Nestjs extends RouteCreateUtils<CRUDDataNestjs, BackendVariables> {
         const type = convertPrisma(property);
 
         const property_object: DatabaseModelProperty = {
-          property_name: property.name.value,
-          property_type: type,
-          property_class_validator: type == 'object' ? '@IsJSON()' : `@Is${upperFirst(type)}()`,
-          is_id: isId,
+          name: property.name.value,
+          type: type,
+          classValidator: type == 'object' ? '@IsJSON()' : `@Is${upperFirst(type)}()`,
+          isId: isId,
         };
         model.properties.push(property_object);
-        const property_class_validator_string = property_object.property_class_validator as string;
-        class_validator.push(property_class_validator_string.slice(1, -2));
+        const classValidator_string = property_object.classValidator as string;
+        classValidator.push(classValidator_string.slice(1, -2));
       });
     });
 
     // unique
-    model.model_class_validator = [...new Set(class_validator)].join(', ');
+    model.model_classValidator = [...new Set(classValidator)].join(', ');
     return model;
   }
 
@@ -121,63 +112,39 @@ export class Nestjs extends RouteCreateUtils<CRUDDataNestjs, BackendVariables> {
     );
   }
 
-  async getCRUD(props: GenerateProps): Promise<CRUDDataNestjs> {
-    let backend_crud_data: CRUDDataNestjs = { service: '', controller: '' };
-    if (props.crud) {
-      const crud_array_service: string[] = [];
-      const crud_array_controller: string[] = [];
-      await asyncForEach(props.crud, async (crud_element) => {
-        const crud_file_service = await template.generate({
-          template: `route-create/backend/nestjs/service/crud/${crud_element}.ejs`,
-          props: props,
-        });
-        crud_array_service.push(crud_file_service);
-
-        const crud_file_controller = await template.generate({
-          template: `route-create/backend/nestjs/controller/crud/${crud_element}.ejs`,
-          props: props,
-        });
-        crud_array_controller.push(crud_file_controller);
-      });
-      backend_crud_data.service = crud_array_service.join('\n');
-      backend_crud_data.controller = crud_array_controller.join('\n');
-    }
-    return backend_crud_data;
-  }
-
   getFiles(props: GenerateProps): FileToGenerate[] {
     return [
       {
-        template: 'route-create/backend/nestjs/route.module.ts.ejs',
-        target: `${props.backend_route_folder}/${'route.module.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/route.module.ts.hbs',
+        target: `${props.backend_route_folder}/${'route.module.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/service/route.service.ts.ejs',
-        target: `${props.backend_route_folder}/${'route.service.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/service/route.service.ts.hbs',
+        target: `${props.backend_route_folder}/${'route.service.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/service/tests/route.service.spec.ts.ejs',
-        target: `${props.backend_route_folder}/${'route.service.spec.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/service/tests/route.service.spec.ts.hbs',
+        target: `${props.backend_route_folder}/${'route.service.spec.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/controller/route.controller.ts.ejs',
-        target: `${props.backend_route_folder}/${'route.controller.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/controller/route.controller.ts.hbs',
+        target: `${props.backend_route_folder}/${'route.controller.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/controller/tests/route.controller.spec.ts.ejs',
-        target: `${props.backend_route_folder}/${'route.controller.spec.ts.ejs'.replace('route', props.route_name_pLf).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/controller/tests/route.controller.spec.ts.hbs',
+        target: `${props.backend_route_folder}/${'route.controller.spec.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/entities/model.entity.ts.ejs',
-        target: `${props.backend_route_folder}/${'/entities/model.entity.ts.ejs'.replace('model', props.model_name_sLc).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/entities/model.entity.ts.hbs',
+        target: `${props.backend_route_folder}/${'/entities/model.entity.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/dto/create-model.dto.ts.ejs',
-        target: `${props.backend_route_folder}/${'/dto/create-model.dto.ts.ejs'.replace('model', props.model_name_sLc).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/dto/create-model.dto.ts.hbs',
+        target: `${props.backend_route_folder}/${'/dto/create-model.dto.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/dto/update-model.dto.ts.ejs',
-        target: `${props.backend_route_folder}/${'/dto/update-model.dto.ts.ejs'.replace('model', props.model_name_sLc).replace('.ejs', '')}`,
+        template: 'route-create/backend/nestjs/dto/update-model.dto.ts.hbs',
+        target: `${props.backend_route_folder}/${'/dto/update-model.dto.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
     ];
   }

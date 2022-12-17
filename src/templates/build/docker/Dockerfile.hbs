@@ -1,0 +1,19 @@
+FROM node:lts
+
+# Create app directory
+WORKDIR /app
+
+# Install app dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy app source
+COPY . .
+
+{{#each props.dockerfile_opt_runs }}
+{{{this}}}
+{{/each}}
+
+EXPOSE {{ props.port }}
+
+CMD [ "node", "{{ props.script_path }}" ]

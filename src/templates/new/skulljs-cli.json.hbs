@@ -1,0 +1,21 @@
+{
+  "projects": { 
+		{{#if props.backend_path }}
+    "backend": {
+      "path": "{{{ props.backend_path }}}",
+      "skulljs_repository": "{{{ props.backend_repository }}}",
+			"cli" : {{{ stringify props.backend_cli }}},
+      "version": "{{{ props.backend_version }}}"
+    }, 
+		{{/if}} 
+		{{#if props.frontend_path }}
+    "frontend": {
+      "path": "{{{ props.frontend_path }}}",
+      "skulljs_repository": "{{{ props.frontend_repository }}}",
+			"cli" : {{{ stringify props.frontend_cli }}},
+      "version": "{{{ props.frontend_version }}}"
+    } 
+		{{/if}}
+  },
+	"cli_version": "{{{ props.sk_version }}}"
+}

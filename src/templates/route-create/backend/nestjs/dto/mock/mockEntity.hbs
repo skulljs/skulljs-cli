@@ -1,0 +1,5 @@
+const mock{{{ props.model_name_sUcfirst }}}: {{{ props.model_name_sUcfirst }}} = {
+{{#each props.model.properties }}
+	{{{this.name}}}: {{{prop2template (faker (concat "datatype." this.type))}}},
+{{/each}}
+};

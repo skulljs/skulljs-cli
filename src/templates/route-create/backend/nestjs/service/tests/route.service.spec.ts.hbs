@@ -1,0 +1,58 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../../prisma.service';
+import { {{{props.route_name_pUcfirst}}}Service } from './{{{props.route_name_pLf}}}.service';
+import { Create{{{props.model_name_sUcfirst}}}Dto } from './dto/create-{{{props.model_name_sLc}}}.dto';
+import { Update{{{props.model_name_sUcfirst}}}Dto } from './dto/update-{{{props.model_name_sLc}}}.dto';
+import { {{{props.model_name_sUcfirst}}} } from './entities/{{{props.model_name_sLc}}}.entity';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
+
+{{> (getPartial path='../../dto/mock/mockEntity') .}}
+
+{{> (getPartial path='../../dto/mock/mockCreate') .}}
+
+{{> (getPartial path='../../dto/mock/mockUpdate') .}}
+
+{{> (getPartial path='../../dto/mock/mockEntities') .}}
+
+const prismaMock = {
+  cats: {
+    findMany: jest.fn((selectors?) => Promise.resolve(mock{{{props.model_name_pUcfirst}}})),
+    create: jest.fn((createData) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+    update: jest.fn((updateData) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+    findUnique: jest.fn((selectors) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+    delete: jest.fn((selectors) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
+  },
+};
+
+describe('{{{props.route_name_pUcfirst}}}Service', () => {
+  let service: {{{props.route_name_pUcfirst}}}Service;
+  let prisma: PrismaService;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [{{{props.route_name_pUcfirst}}}Service],
+    })
+      .useMocker((token) => {
+        if (token === PrismaService) {
+          return prismaMock;
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
+
+    service = module.get<{{{props.route_name_pUcfirst}}}Service>({{{props.route_name_pUcfirst}}}Service);
+    prisma = module.get<PrismaService>(PrismaService);
+  });
+	{{#each props.crud }}
+
+	{{> (getPartial path=(concat 'crud/' this)) ..}}
+	{{/each}}
+
+});
+

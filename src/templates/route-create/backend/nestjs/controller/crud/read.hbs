@@ -1,0 +1,11 @@
+@Get()
+@ApiOkResponse({ type: {{{ props.model_name_sUcfirst }}} })
+findAll() {
+	return this.{{{ props.route_name_pLf }}}Service.findAll();
+}
+
+@Get(':{{{ props.model_id }}}')
+@ApiOkResponse({ type: {{{ props.model_name_sUcfirst }}} })
+findOne(@Param('{{{ props.model_id }}}') {{{ props.model_id }}}: {{{ props.model_id_type }}}) {
+	return this.{{{ props.route_name_pLf }}}Service.findOne(+{{{ props.model_id }}});
+}

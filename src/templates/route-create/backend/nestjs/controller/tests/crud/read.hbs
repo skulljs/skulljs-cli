@@ -1,0 +1,17 @@
+describe('FindAll', () => {
+		it('should return an array of {{{ props.model_name_pUcfirst }}}', async () => {
+			const findAllSpy = jest.spyOn(service, 'findAll');
+			expect(controller.findAll()).resolves.toBe(mock{{{ props.model_name_pUcfirst }}});
+			expect(findAllSpy).toHaveBeenCalledTimes(1);
+			expect(findAllSpy).toHaveBeenCalledWith();
+		});
+});
+
+describe('FindOne', () => {
+		it('should return a {{{ props.model_name_sUcfirst }}}', async () => {
+			const findOneSpy = jest.spyOn(service, 'findOne');
+			expect(controller.findOne(1)).resolves.toBe(mock{{{ props.model_name_sUcfirst }}});
+			expect(findOneSpy).toHaveBeenCalledTimes(1);
+			expect(findOneSpy).toHaveBeenCalledWith(1);
+		});
+});

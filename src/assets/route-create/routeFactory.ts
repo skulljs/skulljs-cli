@@ -8,7 +8,7 @@ const {
   strings: { upperFirst },
 } = toolbox;
 
-type SubclassOfRouteCreateUtils = new () => RouteCreateUtils<any, any>;
+type SubclassOfRouteCreateUtils = new () => RouteCreateUtils<any>;
 
 type StoreObject = {
   [key: string]: SubclassOfRouteCreateUtils;

@@ -18,15 +18,15 @@ export interface PromptsModels {
 }
 
 export interface DatabaseModelProperty {
-  property_name: string;
-  property_type: string;
-  property_class_validator?: string;
-  is_id: boolean;
+  isId: boolean;
+  name: string;
+  type: string;
+  classValidator?: string;
 }
 
 export interface DatabaseModel {
   model_name: string;
-  model_class_validator?: string;
+  model_classValidator?: string;
   properties: DatabaseModelProperty[];
 }
 
@@ -46,18 +46,7 @@ export interface GenerateProps {
   model_id: string;
   model_id_type: string;
   crud: string[];
-  backend_crud_data: any;
-  frontend_crud_data: any;
   model: DatabaseModel;
-}
-
-export interface CRUDDataNestjs {
-  service: string;
-  controller: string;
-}
-
-export interface CRUDDataAngular {
-  service: string;
 }
 
 export interface FileToGenerate {

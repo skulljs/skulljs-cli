@@ -206,8 +206,8 @@ const newCommand: Command = {
 
     toolbox.loader.start(infoLoader('Generating skulljs-cli.json'));
     await generate({
-      template: 'new/skulljs-cli.json.ejs',
-      target: `${props.name}/${'skulljs-cli.json.ejs'.replace('.ejs', '')}`,
+      template: 'new/skulljs-cli.json.hbs',
+      target: `${props.name}/${'skulljs-cli.json.hbs'.replace('.hbs', '')}`,
       props: props,
     });
     await toolbox.loader.succeed();

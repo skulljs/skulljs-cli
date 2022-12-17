@@ -1,0 +1,33 @@
+describe("FindAll", () => {
+	it("should return expected {{{props.model_name_pLc}}} (HttpClient called once)", (done: DoneFn) => {
+		const expected{{{props.model_name_pUcfirst}}}: {{{props.model_name_sUcfirst}}}[] = [];
+
+		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(expected{{{props.model_name_pUcfirst}}})));
+
+		{{{props.route_name_pLf}}}Service
+			.findAll()
+			.then(({{{props.model_name_pLc}}}) => {
+				expect({{{props.model_name_pLc}}}).withContext("expected {{{props.model_name_pLc}}}").toEqual(expected{{{props.model_name_pUcfirst}}});
+				done();
+			})
+			.catch((reason) => done.fail("Request should not fail !"));
+		expect(httpClientSpy.get.calls.count()).withContext("one call").toBe(1);
+	});
+});
+
+describe("FindOne", () => {
+	it("should return expected cat (HttpClient called once)", (done: DoneFn) => {
+		const expected{{{props.model_name_pUcfirst}}}: {{{props.model_name_sUcfirst}}}[] = [];
+
+		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(expected{{{props.model_name_pUcfirst}}})));
+
+		{{{props.route_name_pLf}}}Service
+			.findAll()
+			.then(({{{props.model_name_pLc}}}) => {
+				expect({{{props.model_name_pLc}}}).withContext("expected {{{props.model_name_pLc}}}").toEqual(expected{{{props.model_name_pUcfirst}}});
+				done();
+			})
+			.catch((reason) => done.fail("Request should not fail !"));
+		expect(httpClientSpy.get.calls.count()).withContext("one call").toBe(1);
+	});
+});

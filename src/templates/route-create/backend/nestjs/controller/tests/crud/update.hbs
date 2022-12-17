@@ -1,0 +1,8 @@
+describe('Update', () => {
+    it('should return an updated {{{ props.model_name_sUcfirst }}}', async () => {
+      const updateSpy = jest.spyOn(service, 'update');
+      expect(controller.update(1, mockUpdate{{{ props.model_name_sUcfirst }}})).resolves.toBe(mock{{{ props.model_name_sUcfirst }}});
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledWith(1, mockUpdate{{{ props.model_name_sUcfirst }}});
+    });
+});

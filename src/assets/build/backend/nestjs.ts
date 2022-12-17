@@ -124,8 +124,8 @@ export class Nestjs extends BuildUtils {
       case 'pm2':
         {
           await template.generate({
-            template: 'build/pm2/pm2.ecosystem.json.ejs',
-            target: `${output_path}/pm2.ecosystem.json.ejs`.replace('.ejs', ''),
+            template: 'build/pm2/pm2.ecosystem.json.hbs',
+            target: `${output_path}/pm2.ecosystem.json.hbs`.replace('.hbs', ''),
             props: props,
           });
         }
@@ -133,18 +133,18 @@ export class Nestjs extends BuildUtils {
       case 'docker':
         {
           await template.generate({
-            template: 'build/docker/.dockerignore.ejs',
-            target: `${output_path}/.dockerignore.ejs`.replace('.ejs', ''),
+            template: 'build/docker/.dockerignore.hbs',
+            target: `${output_path}/.dockerignore.hbs`.replace('.hbs', ''),
             props: props,
           });
           await template.generate({
-            template: 'build/docker/docker-compose.yml.ejs',
-            target: `${output_path}/docker-compose.yml.ejs`.replace('.ejs', ''),
+            template: 'build/docker/docker-compose.yml.hbs',
+            target: `${output_path}/docker-compose.yml.hbs`.replace('.hbs', ''),
             props: props,
           });
           await template.generate({
-            template: 'build/docker/Dockerfile.ejs',
-            target: `${output_path}/Dockerfile.ejs`.replace('.ejs', ''),
+            template: 'build/docker/Dockerfile.hbs',
+            target: `${output_path}/Dockerfile.hbs`.replace('.hbs', ''),
             props: props,
           });
         }
