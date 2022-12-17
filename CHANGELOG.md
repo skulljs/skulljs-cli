@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.2 - Unit tests
+
+- Added unit tests (partially for angular)
+- Use Handlebars instead of ejs for easier indentation in templates
+- Stop generating crud templates from commands instead includes them in their respetive parent templates
+
 ## v1.2.1 - Fix forwarding commands
 
 - Fix System Tools - getLocalCli : output the right cwd and cli command
