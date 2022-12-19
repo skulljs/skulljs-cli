@@ -1,5 +1,15 @@
-/**
 describe("Create", () => {
+	it('should return a new {{{props.props.model_name_sLc}}} (HttpClient called once)', (done: DoneFn) => {
 
+		httpClientSpy.post.and.returnValue(defer(() => Promise.resolve(mock{{{props.model_name_sUcfirst}}})));
+
+		{{{props.route_name_pLf}}}Service
+			.create(mockCreate{{{props.model_name_sUcfirst}}})
+			.then(({{{props.model_name_sLc}}}) => {
+				expect({{{props.model_name_sLc}}}).withContext('expected {{{props.model_name_sLc}}}').toEqual(mock{{{props.model_name_sUcfirst}}});
+				done();
+			})
+			.catch((reason) => done.fail('Request should not fail !'));
+		expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1);
+	});
 });
-**/

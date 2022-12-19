@@ -2,6 +2,16 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { defer } from "rxjs";
 import { {{{props.model_name_sUcfirst}}} } from './entities/{{{props.model_name_sLc}}}.entity';
 import { {{{props.route_name_pUcfirst}}}Service } from "./{{{props.route_name_pLf}}}.service";
+import { Create{{{props.model_name_sUcfirst}}}Dto } from './dto/create-{{{props.model_name_sLc}}}.dto';
+import { Update{{{props.model_name_sUcfirst}}}Dto } from './dto/update-{{{props.model_name_sLc}}}.dto';
+
+{{> (getPartial path='../../dto/mock/mockEntity') .}}
+
+{{> (getPartial path='../../dto/mock/mockCreate') .}}
+
+{{> (getPartial path='../../dto/mock/mockUpdate') .}}
+
+{{> (getPartial path='../../dto/mock/mockEntities') .}}
 
 describe("{{{route_name_pUcfirst}}}Service", () => {
 	let httpClientSpy: jasmine.SpyObj<HttpClient>;

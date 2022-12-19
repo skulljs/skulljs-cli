@@ -1,0 +1,7 @@
+const mockCreate{{{props.model_name_sUcfirst}}}: Create{{{props.model_name_sUcfirst}}}Dto = {
+{{#each props.model.properties}}
+  {{#unless this.isId}}
+  {{{this.name}}}: {{{prop2template (faker (concat 'datatype.' this.type))}}},
+  {{/unless}}
+{{/each}}
+};

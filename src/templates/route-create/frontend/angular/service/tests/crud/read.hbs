@@ -1,13 +1,12 @@
 describe("FindAll", () => {
-	it("should return expected {{{props.model_name_pLc}}} (HttpClient called once)", (done: DoneFn) => {
-		const expected{{{props.model_name_pUcfirst}}}: {{{props.model_name_sUcfirst}}}[] = [];
+	it("should return {{{props.model_name_pLc}}} (HttpClient called once)", (done: DoneFn) => {
 
-		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(expected{{{props.model_name_pUcfirst}}})));
+		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(mock{{{props.model_name_pUcfirst}}})));
 
 		{{{props.route_name_pLf}}}Service
 			.findAll()
 			.then(({{{props.model_name_pLc}}}) => {
-				expect({{{props.model_name_pLc}}}).withContext("expected {{{props.model_name_pLc}}}").toEqual(expected{{{props.model_name_pUcfirst}}});
+				expect({{{props.model_name_pLc}}}).withContext("expected {{{props.model_name_pLc}}}").toEqual(mock{{{props.model_name_pUcfirst}}});
 				done();
 			})
 			.catch((reason) => done.fail("Request should not fail !"));
@@ -16,15 +15,14 @@ describe("FindAll", () => {
 });
 
 describe("FindOne", () => {
-	it("should return expected cat (HttpClient called once)", (done: DoneFn) => {
-		const expected{{{props.model_name_pUcfirst}}}: {{{props.model_name_sUcfirst}}}[] = [];
+	it("should return a {{{props.model_name_sLc}}} (HttpClient called once)", (done: DoneFn) => {
 
-		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(expected{{{props.model_name_pUcfirst}}})));
+		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(mock{{{props.model_name_sUcfirst}}})));
 
 		{{{props.route_name_pLf}}}Service
-			.findAll()
-			.then(({{{props.model_name_pLc}}}) => {
-				expect({{{props.model_name_pLc}}}).withContext("expected {{{props.model_name_pLc}}}").toEqual(expected{{{props.model_name_pUcfirst}}});
+			.findOne(1)
+			.then(({{{props.model_name_sLc}}}) => {
+				expect({{{props.model_name_sLc}}}).withContext("expected {{{props.model_name_sLc}}}").toEqual(mock{{{props.model_name_sUcfirst}}});
 				done();
 			})
 			.catch((reason) => done.fail("Request should not fail !"));
