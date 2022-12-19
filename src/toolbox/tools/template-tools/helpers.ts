@@ -44,13 +44,11 @@ export function registerHelpers(toolbox: Toolbox) {
     return path.basename(options.hash.path);
   });
 
-  Handlebars.registerHelper('concat', function (this: any, ...strings: any[]) {
-    return strings.slice(0, -1).reduce((result, string) => {
-      if (string instanceof Function) string = string.call(this);
+  Handlebars.registerHelper('concat', function (this: any, ...elements: any[]) {
+    return elements.slice(0, -1).reduce((result, element) => {
+      if (element instanceof Function) element = element.call(this);
 
-      if (!(string instanceof String)) throw new Error(`concat only accepts strings or functions that returns strings`);
-
-      return result + string;
+      return result + element;
     }, '');
   });
 

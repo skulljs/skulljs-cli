@@ -12,7 +12,6 @@ const {
   strings: { upperFirst, lowerCase, plural },
   fileSystem: { read },
   path,
-  template,
 } = toolbox;
 
 export class Nestjs extends RouteCreateUtils<BackendVariables> {
@@ -42,6 +41,7 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
     const model: DatabaseModel = { model_name: '', properties: [], model_classValidator: '' };
     const classValidator: string[] = [];
     const schema = parsePrismaSchema(read(database_models_file) ?? '');
+
     schema.declarations.forEach((declaration) => {
       if (declaration.kind != 'model') return;
 
@@ -58,7 +58,9 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
 
         if (isRelation) return;
 
-        const isId: boolean = property.attributes!.some((attr: any) => attr.path.value.includes('id'));
+        const isId: boolean =
+          property.attributes!.some((attr: any) => attr.path.value.includes('id')) &&
+          property.attributes!.some((attr: any) => attr.args.some((arg: any) => arg.path.value.includes('autoincrement')));
 
         const type = convertPrisma(property);
 

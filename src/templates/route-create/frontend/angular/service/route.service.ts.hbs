@@ -20,5 +20,7 @@ export class {{{ props.route_name_pUcfirst }}}Service {
 	{{#each props.crud }}
 
 	{{> (getPartial path=(concat 'crud/' this)) ..}}
+
 	{{/each}}
+	
 }

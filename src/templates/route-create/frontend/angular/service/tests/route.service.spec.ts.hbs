@@ -8,7 +8,7 @@ describe("{{{route_name_pUcfirst}}}Service", () => {
 	let {{{props.route_name_pLf}}}Service: {{{props.route_name_pUcfirst}}}Service;
 
 	beforeEach(() => {
-		httpClientSpy = jasmine.createSpyObj("HttpClient", ["get", "post", "delete", "put"]);
+		httpClientSpy = jasmine.createSpyObj("HttpClient", ["get", "post", "delete", "patch"]);
 		{{{props.route_name_pLf}}}Service = new {{{props.route_name_pUcfirst}}}Service(httpClientSpy);
 	});
 	{{#each props.crud }}
