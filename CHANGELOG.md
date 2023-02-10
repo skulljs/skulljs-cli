@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.3 - Update text
+
+- "Create the associated service ?" -> "Create the associated frontend service ?"
+
 ## v1.2.2 - Unit tests
 
 - Added unit tests (partially for angular)

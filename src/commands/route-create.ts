@@ -114,7 +114,7 @@ const routeCreateCommand: Command = {
       },
     ];
     const crud = await prompts.multiSelect('CRUD', crud_choices);
-    const createService = !service || !frontend ? false : await prompts.confirm('Create the associated service ?', true);
+    const createService = !service || !frontend ? false : await prompts.confirm('Create the associated frontend service ?', true);
 
     // add files
     toolbox.loader.start(infoLoader('Generating files'));
