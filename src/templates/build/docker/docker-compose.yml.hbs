@@ -1,8 +1,9 @@
 version: '3.9'
 services:
-  mysql:
+  mysql_{{{ props.app_name }}}:
     restart: always
     image: bitnami/mysql:latest
+    container_name: database_{{{ props.app_name }}}
     environment:
       - MYSQL_PORT_NUMBER=3306
       - MYSQL_CHARACTER_SET=utf8
@@ -22,12 +23,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: app_{{{ props.app_name }}}
     ports:
       - {{{ props.port }}}:{{{ props.port }}}
     depends_on:
-      - mysql
+      - mysql_{{{ props.app_name }}}
     networks:
       - {{{ props.app_name }}}
 
 networks:
   {{{ props.app_name }}}:
+    name: network_{{{ props.app_name }}}

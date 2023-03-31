@@ -10,8 +10,8 @@ describe('FindAll', () => {
 describe('FindOne', () => {
 		it('should return a {{{ props.model_name_sUcfirst }}}', async () => {
 			const findOneSpy = jest.spyOn(service, 'findOne');
-			expect(controller.findOne(1)).resolves.toBe(mock{{{ props.model_name_sUcfirst }}});
+			expect(controller.findOne({{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}})).resolves.toBe(mock{{{ props.model_name_sUcfirst }}});
 			expect(findOneSpy).toHaveBeenCalledTimes(1);
-			expect(findOneSpy).toHaveBeenCalledWith(1);
+			expect(findOneSpy).toHaveBeenCalledWith({{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}});
 		});
 });

@@ -4,7 +4,7 @@ describe("Delete", () => {
 		httpClientSpy.get.and.returnValue(defer(() => Promise.resolve(mock{{{props.model_name_sUcfirst}}})));
 
 		{{{props.route_name_pLf}}}Service
-			.remove(1)
+			.remove({{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}})
 			.then(({{{props.model_name_sLc}}}) => {
 				expect({{{props.model_name_sLc}}}).withContext('expected {{{props.model_name_sLc}}}').toEqual(mock{{{props.model_name_sUcfirst}}});
 				done();

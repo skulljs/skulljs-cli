@@ -4,7 +4,7 @@ describe("Update", () => {
 		httpClientSpy.patch.and.returnValue(defer(() => Promise.resolve(mock{{{props.model_name_sUcfirst}}})));
 
 		{{{props.route_name_pLf}}}Service
-			.update(1,mockUpdate{{{props.model_name_sUcfirst}}})
+			.update({{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}},mockUpdate{{{props.model_name_sUcfirst}}})
 			.then(({{{props.model_name_sLc}}}) => {
 				expect({{{props.model_name_sLc}}}).withContext('expected {{{props.model_name_sLc}}}').toEqual(mock{{{props.model_name_sUcfirst}}});
 				done();

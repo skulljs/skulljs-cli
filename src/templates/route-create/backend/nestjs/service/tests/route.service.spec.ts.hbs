@@ -17,7 +17,7 @@ const moduleMocker = new ModuleMocker(global);
 {{> (getPartial path='../../dto/mock/mockEntities') .}}
 
 const prismaMock = {
-  cats: {
+  {{{props.model_name_Lcfirst}}}: {
     findMany: jest.fn((selectors?) => Promise.resolve(mock{{{props.model_name_pUcfirst}}})),
     create: jest.fn((createData) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
     update: jest.fn((updateData) => Promise.resolve(mock{{{props.model_name_sUcfirst}}})),
@@ -52,7 +52,7 @@ describe('{{{props.route_name_pUcfirst}}}Service', () => {
 	{{#each props.crud }}
 
 	{{> (getPartial path=(concat 'crud/' this)) ..}}
-	
+
 	{{/each}}
 
 });

@@ -120,12 +120,14 @@ const routeCreateCommand: Command = {
     toolbox.loader.start(infoLoader('Generating files'));
 
     const model = backendUtils.getModel(backend_variables.database_models_file, selected_model);
-    let model_id = '';
-    let model_id_type = '';
+    let model_primary_key_name = '';
+    let model_primary_key_type = '';
+    let isPrimaryKeyNumber = false;
     model.properties.forEach((property) => {
-      if (property.isId) {
-        model_id = property.name;
-        model_id_type = property.type;
+      if (property.isPrimaryKey) {
+        model_primary_key_name = property.name;
+        model_primary_key_type = property.type;
+        isPrimaryKeyNumber = property.isPrimaryKeyNumber;
       }
     });
 
@@ -140,12 +142,13 @@ const routeCreateCommand: Command = {
       model_name_sUcfirst: upperFirst(singular(model.model_name)),
       model_name_pLc: lowerCase(plural(model.model_name)),
       model_name_pUcfirst: upperFirst(plural(model.model_name)),
-      model_name_Lc: lowerCase(model.model_name),
+      model_name_Lcfirst: lowerFirst(model.model_name),
       model_name_Ucfirst: upperFirst(model.model_name),
-      model_id: model_id,
-      model_id_type: model_id_type,
+      model_primary_key_name: model_primary_key_name,
+      model_primary_key_type: model_primary_key_type,
       crud: crud,
       model: model,
+      isPrimaryKeyNumber: isPrimaryKeyNumber,
     };
 
     // backend

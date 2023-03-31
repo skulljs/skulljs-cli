@@ -1,7 +1,7 @@
-import { {{{props.model.model_classValidator}}} } from 'class-validator'; 
+import { {{{props.model.model_classValidator}}} } from 'class-validator';
 export class Create{{{props.model_name_sUcfirst}}}Dto {
 {{#each props.model.properties}}
-  {{#unless this.isId}}
+  {{#unless this.isPrimaryKeyAI}}
   {{{this.classValidator}}}
   readonly {{{this.name}}}: {{{this.type}}};
   {{/unless}}

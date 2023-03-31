@@ -1,5 +1,9 @@
 FROM node:lts
 
+# Install chrome for pupeteer
+RUN apt-get update
+RUN apt-get install -y chromium
+
 # Create app directory
 WORKDIR /app
 

@@ -58,17 +58,22 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
 
         if (isRelation) return;
 
-        const isId: boolean =
-          property.attributes!.some((attr: any) => attr.path.value.includes('id')) &&
-          property.attributes!.some((attr: any) => attr.args.some((arg: any) => arg.path.value.includes('autoincrement')));
+        const isPrimaryKey: boolean = property.attributes!.some((attr: any) => attr.path.value.includes('id'));
 
         const type = convertPrisma(property);
+
+        const isPrimaryKeyNumber: boolean = isPrimaryKey && type == 'number';
+
+        const isPrimaryKeyAI: boolean =
+          isPrimaryKeyNumber && property.attributes!.some((attr: any) => attr.args.some((arg: any) => arg.path.value.includes('autoincrement')));
 
         const property_object: DatabaseModelProperty = {
           name: property.name.value,
           type: type,
           classValidator: type == 'object' ? '@IsJSON()' : `@Is${upperFirst(type)}()`,
-          isId: isId,
+          isPrimaryKey: isPrimaryKey,
+          isPrimaryKeyNumber: isPrimaryKeyNumber,
+          isPrimaryKeyAI: isPrimaryKeyAI,
         };
         model.properties.push(property_object);
         const classValidator_string = property_object.classValidator as string;

@@ -1,7 +1,7 @@
 findAll() {
-	return this.prisma.{{{ props.model_name_Lc }}}.findMany();
+	return this.prisma.{{{ props.model_name_Lcfirst }}}.findMany();
 }
 
-findOne({{{ props.model_id }}}: {{{ props.model_id_type }}}) {
-	return this.prisma.{{{ props.model_name_Lc }}}.findUnique({ where: { {{{ props.model_id }}} } });
+findOne({{{ props.model_primary_key_name }}}: {{{ props.model_primary_key_type }}}) {
+	return this.prisma.{{{ props.model_name_Lcfirst }}}.findUnique({ where: { {{{ props.model_primary_key_name }}} } });
 }

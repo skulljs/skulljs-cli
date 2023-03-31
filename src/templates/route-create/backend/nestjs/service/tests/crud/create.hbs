@@ -1,6 +1,6 @@
 describe('Create', () => {
 	it('should return a new {{{props.model_name_sUcfirst}}}', async () => {
-		const createSpy = jest.spyOn(prisma.{{{props.model_name_pLc}}}, 'create');
+		const createSpy = jest.spyOn(prisma.{{{props.model_name_Lcfirst}}}, 'create');
 		expect(service.create(mockCreate{{{props.model_name_sUcfirst}}})).resolves.toBe(mock{{{props.model_name_sUcfirst}}});
 		expect(createSpy).toHaveBeenCalledTimes(1);
 		expect(createSpy).toHaveBeenCalledWith({ data: mockCreate{{{props.model_name_sUcfirst}}} });

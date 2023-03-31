@@ -1,8 +1,8 @@
 describe('Remove', () => {
 	it('should return a deleted {{{props.model_name_sUcfirst}}}', async () => {
-		const removeSpy = jest.spyOn(prisma.{{{props.model_name_pLc}}}, 'delete');
-		expect(service.remove(1)).resolves.toBe(mock{{{props.model_name_sUcfirst}}});
+		const removeSpy = jest.spyOn(prisma.{{{props.model_name_Lcfirst}}}, 'delete');
+		expect(service.remove({{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}})).resolves.toBe(mock{{{props.model_name_sUcfirst}}});
 		expect(removeSpy).toHaveBeenCalledTimes(1);
-		expect(removeSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+		expect(removeSpy).toHaveBeenCalledWith({ where: { {{props.model_primary_key_name}}: {{#if props.isPrimaryKeyNumber}}1{{else}}'1'{{/if}} } });
 	});
 });

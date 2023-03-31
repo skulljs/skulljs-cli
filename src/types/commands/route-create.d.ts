@@ -18,7 +18,9 @@ export interface PromptsModels {
 }
 
 export interface DatabaseModelProperty {
-  isId: boolean;
+  isPrimaryKey: boolean;
+  isPrimaryKeyNumber: boolean;
+  isPrimaryKeyAI: boolean;
   name: string;
   type: string;
   classValidator?: string;
@@ -41,12 +43,13 @@ export interface GenerateProps {
   model_name_sUcfirst: string;
   model_name_pLc: string;
   model_name_pUcfirst: string;
-  model_name_Lc: string;
+  model_name_Lcfirst: string;
   model_name_Ucfirst: string;
-  model_id: string;
-  model_id_type: string;
+  model_primary_key_name: string;
+  model_primary_key_type: string;
   crud: string[];
   model: DatabaseModel;
+  isPrimaryKeyNumber: boolean;
 }
 
 export interface FileToGenerate {

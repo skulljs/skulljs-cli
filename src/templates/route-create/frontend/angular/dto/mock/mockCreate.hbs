@@ -1,7 +1,15 @@
 const mockCreate{{{props.model_name_sUcfirst}}}: Create{{{props.model_name_sUcfirst}}}Dto = {
 {{#each props.model.properties}}
-  {{#unless this.isId}}
+  {{#unless this.isPrimaryKeyAI}}
+    {{#if this.isPrimaryKey}}
+      {{#if this.isPrimaryKeyNumber}}
+  {{{this.name}}}: 1,
+      {{else}}
+  {{{this.name}}}: '1',
+      {{/if}}
+    {{else}}
   {{{this.name}}}: {{{prop2template (faker (concat 'datatype.' this.type))}}},
+    {{/if}}
   {{/unless}}
 {{/each}}
 };

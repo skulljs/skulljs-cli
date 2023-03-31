@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.0 - Fix for Prisma schema + docker
+
+- Fix for Prisma schema PK different of Auto increment number
+- Fix for Prisma schema table name
+- Fix docker files (puppeteer + names)
+
 ## v1.2.3 - Update text
 
 - "Create the associated service ?" -> "Create the associated frontend service ?"
