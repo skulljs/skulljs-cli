@@ -7,7 +7,7 @@ import { BuildFactory } from '@src/assets/build/buildFactory.js';
 const buildCommand: Command = {
   name: 'build',
   scope: 'in',
-  needs: ['frontend', 'backend'],
+  needs: ['backend'],
   description: 'Build project for production',
   run: async (toolbox, options, args, command) => {
     const {
@@ -15,10 +15,11 @@ const buildCommand: Command = {
       fileSystem: { exists, removeAsync },
       prompts,
       strings: { kebabCase },
+      project: { frontend },
       path,
     } = toolbox;
 
-    const { backend, frontend } = toolbox.project as ProjectUse;
+    const { backend } = toolbox.project as ProjectUse;
     const output_path = path.join(backend.path, '../dist');
 
     // Ask user
@@ -63,6 +64,7 @@ const buildCommand: Command = {
       port: Number.parseInt(port),
       hostname,
       protocol,
+      haveFrontend: frontend ? true : false,
     };
 
     // Delete dist directory if exist
@@ -73,7 +75,7 @@ const buildCommand: Command = {
     }
 
     const backendUtils = BuildFactory.getProject(backend.skulljs_repository);
-    const frontendUtils = BuildFactory.getProject(frontend.skulljs_repository);
+    const frontendUtils = frontend ? BuildFactory.getProject(frontend.skulljs_repository) : undefined;
 
     // Build backend
     toolbox.loader.start(infoLoader('Building backend'));
@@ -90,20 +92,22 @@ const buildCommand: Command = {
     await backendUtils.postCopyScript(backend, output_path, buildProps);
     await toolbox.loader.succeed();
 
-    // Build frontend
-    toolbox.loader.start(infoLoader('Building frontend'));
-    await frontendUtils.build(frontend, buildProps);
-    await toolbox.loader.succeed();
+    if (frontend && frontendUtils) {
+      // Build frontend
+      toolbox.loader.start(infoLoader('Building frontend'));
+      await frontendUtils.build(frontend, buildProps);
+      await toolbox.loader.succeed();
 
-    // Copying frontend to dist
-    toolbox.loader.start(infoLoader('Copying frontend to dist'));
-    await frontendUtils.copyFiles(frontend, output_path);
-    await toolbox.loader.succeed();
+      // Copying frontend to dist
+      toolbox.loader.start(infoLoader('Copying frontend to dist'));
+      await frontendUtils.copyFiles(frontend, output_path);
+      await toolbox.loader.succeed();
 
-    // Post copy frontend script
-    toolbox.loader.start(infoLoader('Running post frontend copy script'));
-    await frontendUtils.postCopyScript(frontend, output_path, buildProps);
-    await toolbox.loader.succeed();
+      // Post copy frontend script
+      toolbox.loader.start(infoLoader('Running post frontend copy script'));
+      await frontendUtils.postCopyScript(frontend, output_path, buildProps);
+      await toolbox.loader.succeed();
+    }
 
     // Generate files for manager
     toolbox.loader.start(infoLoader(`Generating files for manager: ${manager}`));

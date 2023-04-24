@@ -62,15 +62,17 @@ export class Nestjs extends BuildUtils {
       );
     }
 
-    // Transform src/app.module.js file
+    // Transform src/app.module.js file for static serve
 
-    await transformAndWrite(
-      {
-        path: appModuleFile,
-        source: program.sourceFiles['AppModuleSource'],
-      },
-      [nestAppModuleBuildTransformer(program.checker)]
-    );
+    if (buildProps.haveFrontend) {
+      await transformAndWrite(
+        {
+          path: appModuleFile,
+          source: program.sourceFiles['AppModuleSource'],
+        },
+        [nestAppModuleBuildTransformer(program.checker)]
+      );
+    }
 
     // Transform src/configs/configuration.js file
 

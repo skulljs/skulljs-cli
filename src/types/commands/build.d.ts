@@ -13,4 +13,5 @@ export interface BuildProps {
   port: number;
   hostname: string;
   protocol: string;
+  haveFrontend: boolean;
 }

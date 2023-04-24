@@ -82,12 +82,12 @@ const newCommand: Command = {
 
     if (single) {
       if (front) {
-        props.frontend_path = '';
+        props.frontend_path = 'app';
         props.backend_path = null;
       }
       if (back) {
         props.frontend_path = null;
-        props.backend_path = '';
+        props.backend_path = 'app';
       }
     }
     // choose repository

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0 - Fix for single apps
+
+- Fix skulljs json generation in sk new
+- Fix sk build for single app
+
 ## v1.3.0 - Fix for Prisma schema + docker
 
 - Fix for Prisma schema PK different of Auto increment number
