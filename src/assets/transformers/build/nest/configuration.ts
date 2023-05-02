@@ -7,7 +7,7 @@ function nestConfigurationTransformer(
 ): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
   return (context: ts.TransformationContext) => {
     function transformObjectLiteral(objectLiteral: ts.ObjectLiteralExpression) {
-      const propertiesToModify = ['port', 'corsOrigins'];
+      const propertiesToModify = ['production', 'port', 'corsOrigins'];
       return ts.factory.updateObjectLiteralExpression(
         objectLiteral,
         objectLiteral.properties.map((prop) => {
@@ -19,6 +19,10 @@ function nestConfigurationTransformer(
 
           let initializer = prop.initializer;
 
+          if (prop.name.escapedText == 'production') {
+            if (initializer.kind != ts.SyntaxKind.TrueKeyword && initializer.kind != ts.SyntaxKind.FalseKeyword) return prop;
+            initializer = ts.factory.createTrue();
+          }
           if (prop.name.escapedText == 'port') {
             if (!ts.isNumericLiteral(initializer)) return prop;
             initializer = ts.factory.createNumericLiteral(configProps.port);

@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.0 - More coherent docker compose names + production boolean
+
+- Refactor docker compose names
+- Change build command to set production=true if the variable exist
+
 ## v1.4.0 - Fix for single apps
 
 - Fix skulljs json generation in sk new
