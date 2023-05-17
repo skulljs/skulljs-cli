@@ -25,7 +25,8 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
   }
   getAllModels(database_models_file: string): PromptsModels[] {
     let models: PromptsModels[] = [];
-    const schema = parsePrismaSchema(read(database_models_file) ?? '');
+    const database_file = read(database_models_file);
+    const schema = parsePrismaSchema(database_file ? database_file.replace(/view (\w+) {/g, 'model $1 {') : '');
     schema.declarations.forEach((declaration) => {
       if (declaration.kind != 'model') return;
       models.push({
@@ -40,7 +41,8 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
   getModel(database_models_file: string, model_name: string): DatabaseModel {
     const model: DatabaseModel = { model_name: '', properties: [], model_classValidator: '' };
     const classValidator: string[] = [];
-    const schema = parsePrismaSchema(read(database_models_file) ?? '');
+    const database_file = read(database_models_file);
+    const schema = parsePrismaSchema(database_file ? database_file.replace(/view (\w+) {/g, 'model $1 {') : '');
 
     schema.declarations.forEach((declaration) => {
       if (declaration.kind != 'model') return;

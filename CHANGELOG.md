@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.1 - Fix for Prisma Views
+
+- Fix for Prisma Views
+
 ## v1.5.0 - More coherent docker compose names + production boolean
 
 - Refactor docker compose names
