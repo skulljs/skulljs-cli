@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.0 - Latest build options + Refactor frontend service
+
+- Add latest build options feature
+- Refactor frontend service
+
 ## v1.5.1 - Fix for Prisma Views
 
 - Fix for Prisma Views

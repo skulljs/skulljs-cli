@@ -3,11 +3,20 @@ import { CliInfos } from './repositories';
  * Structure of a skulljs-cli file
  */
 export interface cliFile {
+  cli_version: string;
   projects: {
     backend?: RepositorySkJson;
     frontend?: RepositorySkJson;
   };
-  cli_version: string;
+  latest_build_options?: LatestBuildOptions;
+}
+
+export interface LatestBuildOptions {
+  app_name: string;
+  hostname: string;
+  port: string;
+  protocol: string;
+  manager: string;
 }
 
 export interface RepositorySkJson {

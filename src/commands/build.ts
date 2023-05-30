@@ -1,4 +1,5 @@
 import { updateNpmPackage } from '@src/assets/build/npmPackageUtils.js';
+import { saveLatestBuildOptions } from '@src/assets/build/latestBuildOptionsUtils.js';
 import { Command } from '@src/types/command';
 import { ProjectUse } from '@src/types/project';
 import { BuildProps } from '@src/types/commands/build';
@@ -11,7 +12,7 @@ const buildCommand: Command = {
   description: 'Build project for production',
   run: async (toolbox, options, args, command) => {
     const {
-      print: { infoLoader, warn },
+      print: { infoLoader, warn, info },
       fileSystem: { exists, removeAsync },
       prompts,
       strings: { kebabCase },
@@ -21,6 +22,8 @@ const buildCommand: Command = {
 
     const { backend } = toolbox.project as ProjectUse;
     const output_path = path.join(backend.path, '../dist');
+
+    const latestBuildOptions = toolbox.project.def_content?.latest_build_options;
 
     // Ask user
 
@@ -48,17 +51,37 @@ const buildCommand: Command = {
       return !isNaN(+port) ? true : 'Enter a valid port - ex : 443';
     }
 
-    const app_name = await prompts.ask('Name of the app', validateAppname);
-    const hostname = await prompts.ask('Hostname or IP of the server', validateHostname);
-    const port = await prompts.ask('Port of the server', validatePort, '443');
-    const protocol = await prompts.select('Which hypertext transfer protocol do you want to use ?', [
-      { title: 'HTTPS', value: 'https' },
-      { title: 'HTTP', value: 'http' },
-    ]);
-    const manager = await prompts.select('Which manager do you want to use ?', [
-      { title: 'PM2', value: 'pm2' },
-      { title: 'Docker', value: 'docker' },
-    ]);
+    let editLatestBuildOptions = true;
+    if (latestBuildOptions) {
+      warn('Latest build options found :');
+      info(JSON.stringify(latestBuildOptions));
+      editLatestBuildOptions = await prompts.confirm('Do you want to edit latest build options ?');
+    }
+
+    let app_name = '';
+    let hostname = '';
+    let port = '';
+    let protocol = '';
+    let manager = '';
+    if (editLatestBuildOptions) {
+      app_name = await prompts.ask('Name of the app', validateAppname);
+      hostname = await prompts.ask('Hostname or IP of the server', validateHostname);
+      port = await prompts.ask('Port of the server', validatePort, '443');
+      protocol = await prompts.select('Which hypertext transfer protocol do you want to use ?', [
+        { title: 'HTTPS', value: 'https' },
+        { title: 'HTTP', value: 'http' },
+      ]);
+      manager = await prompts.select('Which manager do you want to use ?', [
+        { title: 'PM2', value: 'pm2' },
+        { title: 'Docker', value: 'docker' },
+      ]);
+    } else if (latestBuildOptions) {
+      app_name = latestBuildOptions.app_name;
+      hostname = latestBuildOptions.hostname;
+      port = latestBuildOptions.port;
+      protocol = latestBuildOptions.protocol;
+      manager = latestBuildOptions.manager;
+    }
 
     const buildProps: BuildProps = {
       port: Number.parseInt(port),
@@ -118,6 +141,13 @@ const buildCommand: Command = {
     toolbox.loader.start(infoLoader(`Update package.json for manager: ${manager}`));
     await updateNpmPackage(output_path, manager, app_name);
     await toolbox.loader.succeed();
+
+    // Save latest build options
+    if (editLatestBuildOptions) {
+      toolbox.loader.start(infoLoader('Saving latest build options to skulljs-cli.json'));
+      await saveLatestBuildOptions(toolbox.project.project_def!, { app_name, hostname, manager, port, protocol });
+      await toolbox.loader.succeed();
+    }
 
     // Print user
     await warn('Your dist folder is ready.');

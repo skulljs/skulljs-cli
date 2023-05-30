@@ -1,7 +1,7 @@
 findAll(): Promise<{{{ props.model_name_sUcfirst }}}[]> {
-	return lastValueFrom(this.http.get(this.baseurl, this.httpOptions)) as Promise<{{{ props.model_name_sUcfirst }}}[]>;
+	return lastValueFrom(this.http.get<{{{ props.model_name_sUcfirst }}}[]>(this.baseurl, this.httpOptions));
 }
 
 findOne({{{ props.model_primary_key_name }}}: {{{ props.model_primary_key_type }}}): Promise<{{{ props.model_name_sUcfirst }}}> {
-	return lastValueFrom(this.http.get(`${this.baseurl}/${ {{~{ props.model_primary_key_name }~}} }`, this.httpOptions)) as Promise<{{{ props.model_name_sUcfirst }}}>;
+	return lastValueFrom(this.http.get<{{{ props.model_name_sUcfirst }}}>(`${this.baseurl}/${ {{~{ props.model_primary_key_name }~}} }`, this.httpOptions));
 }
