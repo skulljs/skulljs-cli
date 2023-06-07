@@ -1,5 +1,5 @@
 @Get()
-@ApiOkResponse({ type: {{{ props.model_name_sUcfirst }}} })
+@ApiOkResponse({ type:  [{{{ props.model_name_sUcfirst }}}] })
 findAll() {
 	return this.{{{ props.route_name_pLf }}}Service.findAll();
 }

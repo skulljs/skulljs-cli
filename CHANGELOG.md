@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.1 - Minor changes from swagger doc
+
+- Replace ApiOkResponse with ApiCreatedResponse in create function in nestjs controller
+- Replace ApiOkResponse(Type) with ApiOkResponse(\[Type\]) in findAll function in nestjs controller
+
 ## v1.6.0 - Latest build options + Refactor frontend service
 
 - Add latest build options feature
