@@ -5,6 +5,11 @@ services:
     restart: always
     image: bitnami/mysql:latest
     container_name: {{{ props.app_name }}}_database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
     environment:
       - MYSQL_PORT_NUMBER=3306
       - MYSQL_CHARACTER_SET=utf8

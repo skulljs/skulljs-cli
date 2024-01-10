@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.2 - Docker logs options
+
+- Added docker logs options in docker-compose file created by sk build
+
 ## v1.6.1 - Minor changes from swagger doc
 
 - Replace ApiOkResponse with ApiCreatedResponse in create function in nestjs controller
