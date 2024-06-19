@@ -1,17 +1,17 @@
 import { Nestjs } from './backend/nestjs.js';
 import { Angular } from './frontend/angular.js';
+import { RouteGenerateUtils } from './routeGenerateUtils.js';
 import toolbox from '@src/toolbox/toolbox.js';
-import { RouteCreateUtils } from './routeCreateUtils.js';
 
 const {
   exit,
   strings: { upperFirst },
 } = toolbox;
 
-type SubclassOfRouteCreateUtils = new () => RouteCreateUtils<any>;
+type SubclassOfRouteGenerateUtils = new () => RouteGenerateUtils<any>;
 
 type StoreObject = {
-  [key: string]: SubclassOfRouteCreateUtils;
+  [key: string]: SubclassOfRouteGenerateUtils;
 };
 const Store: StoreObject = {
   Nestjs,

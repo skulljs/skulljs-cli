@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../{{calcPathDepth props.frontend_folder_depth}}environments/environment';
 import { lastValueFrom } from 'rxjs';
 import { Create{{{ props.model_name_sUcfirst }}}Dto } from './dto/create-{{{ props.model_name_sLc }}}.dto';
 import { Update{{{ props.model_name_sUcfirst }}}Dto } from './dto/update-{{{ props.model_name_sLc }}}.dto';
@@ -22,5 +22,5 @@ export class {{{ props.route_name_pUcfirst }}}Service {
 	{{> (getPartial path=(concat 'crud/' this)) ..}}
 
 	{{/each}}
-	
+
 }

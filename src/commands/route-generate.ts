@@ -1,11 +1,11 @@
 import { Command } from '@src/types/command';
-import { ProjectUse, RepositorySkJson } from '@src/types/project';
-import { FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-create';
-import { RouteFactory } from '@src/assets/route-create/routeFactory.js';
+import { ProjectUse } from '@src/types/project';
+import { FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-generate';
+import { RouteFactory } from '@src/assets/route-generate/routeFactory.js';
 
-const routeCreateCommand: Command = {
-  name: 'route:create',
-  aliases: ['rc'],
+const routeGenerateCommand: Command = {
+  name: 'route:generate',
+  aliases: ['rg'],
   scope: 'in',
   needs: ['backend'],
   options: [
@@ -21,7 +21,7 @@ const routeCreateCommand: Command = {
       required: false,
     },
   ],
-  description: 'Add a route',
+  description: 'Generate a route based on a database table to the backend',
   run: async (toolbox, options, args, command) => {
     const {
       print: { infoLoader, warn },
@@ -39,9 +39,9 @@ const routeCreateCommand: Command = {
     // Check route name
     const pattern = /^([A-Za-z]+\/)*[A-Za-z]{3,}$/m;
 
-    function isFilePath(path: string, isArgs: boolean): { validate: boolean; errorMsg: string } {
+    function isFilePath(path: string, isArgs: boolean, example: string): { validate: boolean; errorMsg: string } {
       let is_file_path = pattern.test(path);
-      const errorMsg = `${path} is not valid : Min length : 3, Characters : letters/slashes, Example: sk route:create example/myroute`;
+      const errorMsg = `${path} is not valid : Min length : 3, Characters : letters/slashes, Example: sk route:generate ${example}`;
       if (!is_file_path) {
         if (isArgs) {
           exit(command, errorMsg);
@@ -52,12 +52,12 @@ const routeCreateCommand: Command = {
 
     let route_path: string = args[0];
     if (route_path) {
-      isFilePath(route_path, true);
+      isFilePath(route_path, true, 'example/myRoute');
     } else {
       route_path = await prompts.ask(
         'Path of the route ?',
         (value) => {
-          const checker = isFilePath(value, false);
+          const checker = isFilePath(value, false, 'example/myRoute');
           return checker.validate ? true : checker.errorMsg;
         },
         'example/myRoute'
@@ -67,9 +67,7 @@ const routeCreateCommand: Command = {
     const backendUtils = RouteFactory.getProject(backend.skulljs_repository);
     const frontendUtils = frontend ? RouteFactory.getProject(frontend.skulljs_repository) : undefined;
 
-    // variables declarations
     const backend_variables = backendUtils.getVariables(backend, route_path);
-    const frontend_variables = frontendUtils?.getVariables(frontend!, backend_variables.backend_route_folder);
 
     // Check if route already exist
     if (exists(backend_variables.backend_route_folder)) {
@@ -114,9 +112,26 @@ const routeCreateCommand: Command = {
       },
     ];
     const crud = await prompts.multiSelect('CRUD', crud_choices);
-    const createService = !service || !frontend ? false : await prompts.confirm('Create the associated frontend service ?', true);
+    const generateService = !service || !frontend ? false : await prompts.confirm('Generate the associated frontend service ?', true);
+    const service_path = await prompts.ask(
+      'Path of the frontend service ?',
+      (value) => {
+        const checker = isFilePath(value, false, 'example/myService');
+        return checker.validate ? true : checker.errorMsg;
+      },
+      route_path
+    );
 
-    // add files
+    const frontend_variables = frontendUtils?.getVariables(frontend!, service_path);
+
+    // Check if frontend service already exist
+    let overwrite_frontend = true;
+    if (exists(frontend_variables.frontend_service_folder)) {
+      warn(`A frontend service named ${frontend_variables.frontend_service_folder} already exists !`);
+      overwrite_frontend = await prompts.confirm('Overwrite ?');
+    }
+
+    // generate files
     toolbox.loader.start(infoLoader('Generating files'));
 
     const model = backendUtils.getModel(backend_variables.database_models_file, selected_model);
@@ -132,7 +147,9 @@ const routeCreateCommand: Command = {
     });
 
     const props: GenerateProps = {
+      backend_folder_depth: backend_variables.backend_folder_depth,
       backend_route_folder: backend_variables.backend_route_folder,
+      frontend_folder_depth: frontend_variables ? frontend_variables.frontend_folder_depth : 0,
       frontend_service_folder: frontend_variables ? frontend_variables.frontend_service_folder : '',
       route_name_sLc: lowerCase(singular(route_name)),
       route_name_sUcfirst: upperFirst(singular(route_name)),
@@ -164,7 +181,7 @@ const routeCreateCommand: Command = {
     );
 
     // frontend
-    if (createService) {
+    if (generateService && overwrite_frontend) {
       const frontendFilesToGenerates: FileToGenerate[] = frontendUtils!.getFiles(props);
       await Promise.all(
         frontendFilesToGenerates.map(async (file) => {
@@ -189,4 +206,4 @@ const routeCreateCommand: Command = {
   },
 };
 
-export default routeCreateCommand;
+export default routeGenerateCommand;

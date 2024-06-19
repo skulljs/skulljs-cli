@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.0 - Refactor route:create to route:generate + Fix import (path depth) + New Angular version support
+
+- Refactor route:create to route:generate
+- Fix import (path depth)
+- Support new versions of Angular
+
 ## v1.6.2 - Docker logs options
 
 - Added docker logs options in docker-compose file created by sk build

@@ -77,4 +77,8 @@ export function registerHelpers(toolbox: Toolbox) {
     if (this.type == 'string') return `"${value.replace(/['"\\]/g, '')}"`;
     return value;
   });
+
+  Handlebars.registerHelper('calcPathDepth', function (folder_depth: number) {
+    return '../'.repeat(folder_depth);
+  });
 }

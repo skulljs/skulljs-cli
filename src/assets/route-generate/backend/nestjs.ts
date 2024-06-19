@@ -1,8 +1,8 @@
-import { BackendVariables, DatabaseModel, DatabaseModelProperty, FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-create.js';
-import { RouteCreateUtils } from '../routeCreateUtils.js';
+import { BackendVariables, DatabaseModel, DatabaseModelProperty, FileToGenerate, GenerateProps, PromptsModels } from '@src/types/commands/route-generate.js';
 import { getTsProgram, transformAndWrite } from '@src/utils/tsCompilerUtils.js';
 import { nestAppModuleTransformer } from '@src/assets/transformers/routes/nest/appModuleRouteImport.js';
 import { parsePrismaSchema } from '@loancrate/prisma-schema-parser';
+import { RouteGenerateUtils } from '../routeGenerateUtils.js';
 import { convertPrisma } from '../databaseConvert.js';
 import { RepositorySkJson } from '@src/types/project';
 import toolbox from '@src/toolbox/toolbox.js';
@@ -14,14 +14,15 @@ const {
   path,
 } = toolbox;
 
-export class Nestjs extends RouteCreateUtils<BackendVariables> {
+export class Nestjs extends RouteGenerateUtils<BackendVariables> {
   getVariables(repository: RepositorySkJson, route_path: string): BackendVariables {
+    const backend_folder_depth = route_path.split('/').length - 1;
     const backend_src_folder = path.join(repository.path, 'src/');
     const backend_routes_folder = path.join(backend_src_folder, 'routes');
     const backend_route_folder = path.join(backend_routes_folder, route_path);
     const database_models_file = path.join(repository.path, 'prisma/schema.prisma');
 
-    return { backend_src_folder, backend_routes_folder, backend_route_folder, database_models_file };
+    return { backend_folder_depth, backend_src_folder, backend_routes_folder, backend_route_folder, database_models_file };
   }
   getAllModels(database_models_file: string): PromptsModels[] {
     let models: PromptsModels[] = [];
@@ -124,35 +125,35 @@ export class Nestjs extends RouteCreateUtils<BackendVariables> {
   getFiles(props: GenerateProps): FileToGenerate[] {
     return [
       {
-        template: 'route-create/backend/nestjs/route.module.ts.hbs',
+        template: 'route-generate/backend/nestjs/route.module.ts.hbs',
         target: `${props.backend_route_folder}/${'route.module.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/service/route.service.ts.hbs',
+        template: 'route-generate/backend/nestjs/service/route.service.ts.hbs',
         target: `${props.backend_route_folder}/${'route.service.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/service/tests/route.service.spec.ts.hbs',
+        template: 'route-generate/backend/nestjs/service/tests/route.service.spec.ts.hbs',
         target: `${props.backend_route_folder}/${'route.service.spec.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/controller/route.controller.ts.hbs',
+        template: 'route-generate/backend/nestjs/controller/route.controller.ts.hbs',
         target: `${props.backend_route_folder}/${'route.controller.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/controller/tests/route.controller.spec.ts.hbs',
+        template: 'route-generate/backend/nestjs/controller/tests/route.controller.spec.ts.hbs',
         target: `${props.backend_route_folder}/${'route.controller.spec.ts.hbs'.replace('route', props.route_name_pLf).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/entities/model.entity.ts.hbs',
+        template: 'route-generate/backend/nestjs/entities/model.entity.ts.hbs',
         target: `${props.backend_route_folder}/${'/entities/model.entity.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/dto/create-model.dto.ts.hbs',
+        template: 'route-generate/backend/nestjs/dto/create-model.dto.ts.hbs',
         target: `${props.backend_route_folder}/${'/dto/create-model.dto.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
       {
-        template: 'route-create/backend/nestjs/dto/update-model.dto.ts.hbs',
+        template: 'route-generate/backend/nestjs/dto/update-model.dto.ts.hbs',
         target: `${props.backend_route_folder}/${'/dto/update-model.dto.ts.hbs'.replace('model', props.model_name_sLc).replace('.hbs', '')}`,
       },
     ];

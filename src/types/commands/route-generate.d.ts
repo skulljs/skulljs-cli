@@ -1,4 +1,5 @@
 export interface BackendVariables {
+  backend_folder_depth: number;
   backend_src_folder: string;
   backend_routes_folder: string;
   backend_route_folder: string;
@@ -6,6 +7,7 @@ export interface BackendVariables {
 }
 
 export interface FrontendVariables {
+  frontend_folder_depth: number;
   frontend_service_name: string;
   frontend_src_folder: string;
   frontend_services_folder: string;
@@ -33,7 +35,9 @@ export interface DatabaseModel {
 }
 
 export interface GenerateProps {
+  backend_folder_depth: number;
   backend_route_folder: string;
+  frontend_folder_depth: number;
   frontend_service_folder: string;
   route_name_sLc: string;
   route_name_sUcfirst: string;

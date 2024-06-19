@@ -11,7 +11,14 @@ const { system, path, fileSystem } = toolbox;
 export class Angular extends BuildUtils {
   async postCopyScript(repository: RepositorySkJson, output_path: string, buildProps: BuildProps): Promise<void> {}
   async copyFiles(repository: RepositorySkJson, output_path: string, protocol?: string): Promise<void> {
-    await fileSystem.copyAsync(path.join(repository.path, 'dist'), path.join(output_path, 'src/public'));
+    if (await fileSystem.existsAsync(path.join(repository.path, 'dist', 'browser'))) {
+      // NEW ANGULAR VERSION
+      await fileSystem.copyAsync(path.join(repository.path, 'dist', 'browser'), path.join(output_path, 'src/public'));
+      await fileSystem.copyAsync(path.join(repository.path, 'dist', '3rdpartylicenses.txt'), path.join(output_path, 'src/public', '3rdpartylicenses.txt'));
+    } else {
+      // OLD ANGULAR VERSION
+      await fileSystem.copyAsync(path.join(repository.path, 'dist'), path.join(output_path, 'src/public'));
+    }
   }
   async build(repository: RepositorySkJson, buildProps?: BuildProps): Promise<void> {
     const backend = (toolbox.project as ProjectUse).backend;

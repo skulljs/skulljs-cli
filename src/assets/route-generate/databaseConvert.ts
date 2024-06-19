@@ -1,5 +1,5 @@
 import { FieldDeclaration } from '@loancrate/prisma-schema-parser';
-import { ConvertMatrix } from '@src/types/commands/route-create';
+import { ConvertMatrix } from '@src/types/commands/route-generate';
 
 function convertPrisma(modelField: FieldDeclaration) {
   let converted_type = 'string';
