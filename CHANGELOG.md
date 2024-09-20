@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.8.0 - Add db_driver option when using sk build
+
+- Add db_driver option when using sk build (currently supported: mysql, postgresql) 
+
 ## v1.7.0 - Refactor route:create to route:generate + Fix import (path depth) + New Angular version support
 
 - Refactor route:create to route:generate

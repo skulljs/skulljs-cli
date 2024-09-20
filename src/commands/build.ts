@@ -61,12 +61,17 @@ const buildCommand: Command = {
     let app_name = '';
     let hostname = '';
     let port = '';
+    let db_driver = '';
     let protocol = '';
     let manager = '';
     if (editLatestBuildOptions) {
       app_name = await prompts.ask('Name of the app', validateAppname);
       hostname = await prompts.ask('Hostname or IP of the server', validateHostname);
       port = await prompts.ask('Port of the server', validatePort, '443');
+      db_driver = await prompts.select('Which database driver do you want to use (take care to the .env file) ?', [
+        { title: 'PostgreSQL', value: 'postgresql' },
+        { title: 'MySQL', value: 'mysql' },
+      ]);
       protocol = await prompts.select('Which hypertext transfer protocol do you want to use ?', [
         { title: 'HTTPS', value: 'https' },
         { title: 'HTTP', value: 'http' },
@@ -79,6 +84,7 @@ const buildCommand: Command = {
       app_name = latestBuildOptions.app_name;
       hostname = latestBuildOptions.hostname;
       port = latestBuildOptions.port;
+      db_driver = latestBuildOptions.db_driver;
       protocol = latestBuildOptions.protocol;
       manager = latestBuildOptions.manager;
     }
@@ -134,7 +140,7 @@ const buildCommand: Command = {
 
     // Generate files for manager
     toolbox.loader.start(infoLoader(`Generating files for manager: ${manager}`));
-    await backendUtils.generateManagerFiles(output_path, manager, app_name, +port);
+    await backendUtils.generateManagerFiles(output_path, manager, app_name, +port, db_driver);
     await toolbox.loader.succeed();
 
     // Update npm scripts
@@ -145,7 +151,7 @@ const buildCommand: Command = {
     // Save latest build options
     if (editLatestBuildOptions) {
       toolbox.loader.start(infoLoader('Saving latest build options to skulljs-cli.json'));
-      await saveLatestBuildOptions(toolbox.project.project_def!, { app_name, hostname, manager, port, protocol });
+      await saveLatestBuildOptions(toolbox.project.project_def!, { app_name, hostname, manager, port, db_driver, protocol });
       await toolbox.loader.succeed();
     }
 

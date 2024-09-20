@@ -15,6 +15,7 @@ export interface LatestBuildOptions {
   app_name: string;
   hostname: string;
   port: string;
+  db_driver: string;
   protocol: string;
   manager: string;
 }

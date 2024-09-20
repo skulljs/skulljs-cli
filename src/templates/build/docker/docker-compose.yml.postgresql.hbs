@@ -1,0 +1,40 @@
+version: '3.9'
+name: {{{ props.app_name }}}
+services:
+  {{{ props.app_name }}}_postgresql:
+    restart: always
+    image: bitnami/postgresql:latest
+    container_name: {{{ props.app_name }}}_database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      - POSTGRESQL_DATABASE=postgres
+      - POSTGRESQL_PORT_NUMBER=5432
+      - POSTGRESQL_POSTGRES_PASSWORD=
+      - POSTGRESQL_USERNAME=
+      - POSTGRESQL_PASSWORD=
+    networks:
+      - {{{ props.app_name }}}_network
+    volumes:
+      - ../docker-data/postgresql:/bitnami/postgresql
+  {{{ props.app_name }}}_app:
+    stdin_open: true
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: {{{ props.app_name }}}_app
+    container_name: {{{ props.app_name }}}_app
+    ports:
+      - {{{ props.port }}}:{{{ props.port }}}
+    depends_on:
+      - {{{ props.app_name }}}_postgresql
+    networks:
+      - {{{ props.app_name }}}_network
+
+networks:
+  {{{ props.app_name }}}_network:
+    name: {{{ props.app_name }}}_network

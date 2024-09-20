@@ -120,7 +120,7 @@ export class Nestjs extends BuildUtils {
     ]);
     return prefix;
   }
-  async generateManagerFiles(output_path: string, manager: string, app_name: string, port: number): Promise<void> {
+  async generateManagerFiles(output_path: string, manager: string, app_name: string, port: number, db_driver: string): Promise<void> {
     const props: ManagerProps = { app_name: app_name, script_path: './src/main.js', port: port, dockerfile_opt_runs: ['RUN npx prisma generate'] };
     switch (manager) {
       case 'pm2':
@@ -139,11 +139,22 @@ export class Nestjs extends BuildUtils {
             target: `${output_path}/.dockerignore.hbs`.replace('.hbs', ''),
             props: props,
           });
-          await template.generate({
-            template: 'build/docker/docker-compose.yml.hbs',
-            target: `${output_path}/docker-compose.yml.hbs`.replace('.hbs', ''),
-            props: props,
-          });
+          switch (db_driver) {
+            case 'mysql':
+              await template.generate({
+                template: 'build/docker/docker-compose.yml.mysql.hbs',
+                target: `${output_path}/docker-compose.yml.mysql.hbs`.replace('.mysql.hbs', ''),
+                props: props,
+              });
+              break;
+            case 'postgresql':
+              await template.generate({
+                template: 'build/docker/docker-compose.yml.postgresql.hbs',
+                target: `${output_path}/docker-compose.yml.postgresql.hbs`.replace('.postgresql.hbs', ''),
+                props: props,
+              });
+              break;
+          }
           await template.generate({
             template: 'build/docker/Dockerfile.hbs',
             target: `${output_path}/Dockerfile.hbs`.replace('.hbs', ''),

@@ -9,6 +9,7 @@ export async function saveLatestBuildOptions(projecDefPath: string, latestBuildO
     app_name: latestBuildOptions.app_name,
     hostname: latestBuildOptions.hostname,
     port: latestBuildOptions.port,
+    db_driver: latestBuildOptions.db_driver,
     protocol: latestBuildOptions.protocol,
     manager: latestBuildOptions.manager,
   };
