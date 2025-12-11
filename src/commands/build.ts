@@ -106,6 +106,8 @@ const buildCommand: Command = {
     const backendUtils = BuildFactory.getProject(backend.skulljs_repository);
     const frontendUtils = frontend ? BuildFactory.getProject(frontend.skulljs_repository) : undefined;
 
+    const isFrontendSSR = frontend && frontendUtils ? await frontendUtils.isFrontendSSR(frontend) : false;
+
     // Build backend
     toolbox.loader.start(infoLoader('Building backend'));
     await backendUtils.build(backend);
@@ -118,7 +120,7 @@ const buildCommand: Command = {
 
     // Post copy backend script
     toolbox.loader.start(infoLoader('Running post backend copy script'));
-    await backendUtils.postCopyScript(backend, output_path, buildProps);
+    await backendUtils.postCopyScript(backend, output_path, buildProps, isFrontendSSR);
     await toolbox.loader.succeed();
 
     if (frontend && frontendUtils) {
@@ -134,7 +136,7 @@ const buildCommand: Command = {
 
       // Post copy frontend script
       toolbox.loader.start(infoLoader('Running post frontend copy script'));
-      await frontendUtils.postCopyScript(frontend, output_path, buildProps);
+      await frontendUtils.postCopyScript(frontend, output_path, buildProps, isFrontendSSR);
       await toolbox.loader.succeed();
     }
 

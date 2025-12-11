@@ -5,15 +5,16 @@ import { getApiPrefix } from '@src/assets/transformers/build/nest/apiPrefix.js';
 import { BuildProps, ManagerProps } from '@src/types/commands/build';
 import { nestMainTransformer } from '@src/assets/transformers/build/nest/mainHttps.js';
 import { nestMainTransformerLogs } from '@src/assets/transformers/build/nest/mainLogs.js';
-import { nestAppModuleBuildTransformer } from '@src/assets/transformers/build/nest/appModuleStatic.js';
+import { nestAppModuleStaticBuildTransformer } from '@src/assets/transformers/build/nest/appModuleStatic.js';
 import { nestConfigurationTransformer } from '@src/assets/transformers/build/nest/configuration.js';
 import ts from 'typescript';
 import toolbox from '@src/toolbox/toolbox.js';
+import { nestAppModuleSSRBuildTransformer } from '@src/assets/transformers/build/nest/appModuleSSR.js';
 
 const { template, system, path, fileSystem, exit } = toolbox;
 
 export class Nestjs extends BuildUtils {
-  async postCopyScript(repository: RepositorySkJson, output_path: string, buildProps: BuildProps): Promise<void> {
+  async postCopyScript(repository: RepositorySkJson, output_path: string, buildProps: BuildProps, isFrontendSSR: boolean): Promise<void> {
     // Set all files path to be modified
     const mainFile = path.join(output_path, 'src/main.js');
     const appModuleFile = path.join(output_path, 'src/app.module.js');
@@ -65,13 +66,33 @@ export class Nestjs extends BuildUtils {
     // Transform src/app.module.js file for static serve
 
     if (buildProps.haveFrontend) {
-      await transformAndWrite(
-        {
-          path: appModuleFile,
-          source: program.sourceFiles['AppModuleSource'],
-        },
-        [nestAppModuleBuildTransformer(program.checker)]
-      );
+      if (isFrontendSSR) {
+        await transformAndWrite(
+          {
+            path: appModuleFile,
+            source: program.sourceFiles['AppModuleSource'],
+          },
+          [nestAppModuleSSRBuildTransformer(program.checker)]
+        );
+
+        const ssrProps = {
+          staticDir: 'src/front-ssr/browser',
+          serverDir: 'src/front-ssr/server',
+        };
+        await template.generate({
+          template: 'build/ssr/nestjs/ssr.controller.js.hbs',
+          target: `${output_path}/src/ssr.controller.js`.replace('.hbs', ''),
+          props: ssrProps,
+        });
+      } else {
+        await transformAndWrite(
+          {
+            path: appModuleFile,
+            source: program.sourceFiles['AppModuleSource'],
+          },
+          [nestAppModuleStaticBuildTransformer(program.checker)]
+        );
+      }
     }
 
     // Transform src/configs/configuration.js file

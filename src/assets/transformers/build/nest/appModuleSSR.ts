@@ -9,9 +9,9 @@ import ts, {
   VariableStatement,
 } from 'typescript';
 import { hasRequire } from '../../utils.js';
-import { staticServe, staticServeImport } from './nodes/staticServe.js';
+import { ssrController, ssrControllerImport } from './nodes/ssrController.js';
 
-function nestAppModuleStaticBuildTransformer(typeChecker: ts.TypeChecker): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
+function nestAppModuleSSRBuildTransformer(typeChecker: ts.TypeChecker): (context: ts.TransformationContext) => ts.Transformer<ts.SourceFile> {
   return (context: ts.TransformationContext) => {
     function transformObjectLiteral(objectLiteral: ts.ObjectLiteralExpression) {
       return ts.factory.updateObjectLiteralExpression(
@@ -21,11 +21,11 @@ function nestAppModuleStaticBuildTransformer(typeChecker: ts.TypeChecker): (cont
 
           if (!prop.name || !ts.isIdentifier(prop.name)) return prop;
 
-          if (prop.name.escapedText !== 'imports') return prop;
+          if (prop.name.escapedText !== 'controllers') return prop;
 
           if (!ts.isArrayLiteralExpression(prop.initializer)) return prop;
 
-          const elements = [staticServe, ...prop.initializer.elements];
+          const elements = [ssrController, ...prop.initializer.elements];
 
           return ts.factory.updatePropertyAssignment(prop, prop.name, ts.factory.createArrayLiteralExpression(elements, true));
         })
@@ -59,7 +59,7 @@ function nestAppModuleStaticBuildTransformer(typeChecker: ts.TypeChecker): (cont
 
               return lastIndex;
             }, 1);
-            statements.splice(lastRequireIndex + 1, 0, staticServeImport);
+            statements.splice(lastRequireIndex + 1, 0, ssrControllerImport);
             newSource = ts.factory.updateSourceFile(node as SourceFile, statements);
           }
           return newSource;
@@ -88,4 +88,4 @@ function nestAppModuleStaticBuildTransformer(typeChecker: ts.TypeChecker): (cont
   };
 }
 
-export { nestAppModuleStaticBuildTransformer };
+export { nestAppModuleSSRBuildTransformer };

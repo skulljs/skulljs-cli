@@ -8,6 +8,11 @@ export interface ManagerProps {
   dockerfile_opt_runs: string[];
 }
 
+export interface SSRBuildProps {
+  staticDir: string;
+  serverDir: string;
+}
+
 export interface BuildProps {
   apiPrefix?: string;
   port: number;

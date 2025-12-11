@@ -9,12 +9,22 @@ import toolbox from '@src/toolbox/toolbox.js';
 const { system, path, fileSystem } = toolbox;
 
 export class Angular extends BuildUtils {
-  async postCopyScript(repository: RepositorySkJson, output_path: string, buildProps: BuildProps): Promise<void> {}
+  async postCopyScript(repository: RepositorySkJson, output_path: string, buildProps: BuildProps, isFrontendSSR: boolean): Promise<void> {}
   async copyFiles(repository: RepositorySkJson, output_path: string, protocol?: string): Promise<void> {
     if (await fileSystem.existsAsync(path.join(repository.path, 'dist', 'browser'))) {
       // NEW ANGULAR VERSION
-      await fileSystem.copyAsync(path.join(repository.path, 'dist', 'browser'), path.join(output_path, 'src/public'));
-      await fileSystem.copyAsync(path.join(repository.path, 'dist', '3rdpartylicenses.txt'), path.join(output_path, 'src/public', '3rdpartylicenses.txt'));
+
+      // WITH SSR
+      if (await this.isFrontendSSR(repository)) {
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', 'browser'), path.join(output_path, 'src/front-ssr', 'browser'));
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', 'server'), path.join(output_path, 'src/front-ssr',  'server'));
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', '3rdpartylicenses.txt'), path.join(output_path, 'src/front-ssr', '3rdpartylicenses.txt'));
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', 'prerendered-routes.json'), path.join(output_path, 'src/front-ssr', 'prerendered-routes.json'));
+      } else {
+        // WITHOUT SSR
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', 'browser'), path.join(output_path, 'src/public'));
+        await fileSystem.copyAsync(path.join(repository.path, 'dist', '3rdpartylicenses.txt'), path.join(output_path, 'src/public', '3rdpartylicenses.txt'));
+      }
     } else {
       // OLD ANGULAR VERSION
       await fileSystem.copyAsync(path.join(repository.path, 'dist'), path.join(output_path, 'src/public'));
@@ -62,5 +72,9 @@ export class Angular extends BuildUtils {
     await system.run('node', `${localCli.cli} build --configuration=production --delete-output-path`, {
       cwd: localCli.cwd,
     });
+  }
+
+  async isFrontendSSR(repository: RepositorySkJson) {
+    return !!(await fileSystem.existsAsync(path.join(repository.path, 'dist', 'server')));
   }
 }

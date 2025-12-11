@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.9.0 - Add support for Angular SSR
+
+- Add support for Angular SSR
+
 ## v1.8.0 - Add db_driver option when using sk build
 
 - Add db_driver option when using sk build (currently supported: mysql, postgresql) 

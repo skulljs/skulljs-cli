@@ -1,0 +1,167 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "SSRController", {
+    enumerable: true,
+    get: function() {
+        return SSRController;
+    }
+});
+const _common = require("@nestjs/common");
+const _path = require("path");
+const _fs = require("fs");
+function _getRequireWildcardCache(nodeInterop) {
+    if (typeof WeakMap !== "function") return null;
+    var cacheBabelInterop = new WeakMap();
+    var cacheNodeInterop = new WeakMap();
+    return (_getRequireWildcardCache = function(nodeInterop) {
+        return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
+    })(nodeInterop);
+}
+function _interop_require_wildcard(obj, nodeInterop) {
+    if (!nodeInterop && obj && obj.__esModule) {
+        return obj;
+    }
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
+        return {
+            default: obj
+        };
+    }
+    var cache = _getRequireWildcardCache(nodeInterop);
+    if (cache && cache.has(obj)) {
+        return cache.get(obj);
+    }
+    var newObj = {
+        __proto__: null
+    };
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+    for(var key in obj){
+        if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+            var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+            if (desc && (desc.get || desc.set)) {
+                Object.defineProperty(newObj, key, desc);
+            } else {
+                newObj[key] = obj[key];
+            }
+        }
+    }
+    newObj.default = obj;
+    if (cache) {
+        cache.set(obj, newObj);
+    }
+    return newObj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let SSRController = class SSRController {
+    async onModuleInit() {
+        await this.loadSSRBundle();
+        this.loadPrerenderedRoutes();
+    }
+    async loadSSRBundle() {
+        try {
+            const bundle = await Promise.resolve((0, _path.join)(this.serverDir, 'server.mjs')).then((p)=>/*#__PURE__*/ _interop_require_wildcard(require(p)));
+            this.ssrHandler = bundle.reqHandler || bundle.default;
+            if (!this.ssrHandler) {
+                this.logger.warn('SSR handler not found in server.mjs');
+            } else {
+                this.logger.log('SSR bundle loaded');
+            }
+        } catch (err) {
+            this.logger.error('Failed to load SSR bundle', err);
+        }
+    }
+    loadPrerenderedRoutes() {
+        const manifestFile = (0, _path.join)(this.staticDir, '..', 'prerendered-routes.json');
+        if (!(0, _fs.existsSync)(manifestFile)) return;
+        try {
+            const manifest = JSON.parse((0, _fs.readFileSync)(manifestFile, 'utf-8'));
+            Object.entries(manifest.routes || {}).forEach(([route, info])=>this.prerenderedRoutes.set(route, info.route));
+            this.logger.log(`Loaded ${this.prerenderedRoutes.size} prerendered routes`);
+        } catch (err) {
+            this.logger.warn('Could not load prerendered routes:', err.message);
+        }
+    }
+    async render(req, res, next) {
+        const url = req.path;
+        // 1️⃣ Skip API routes
+        if (url.startsWith('/api') || url.startsWith('/sitemap.xml')) return next();
+        // 2️⃣ Serve static assets directly
+        if (this.isStatic(url)) {
+            const file = (0, _path.join)(this.staticDir, url);
+            if ((0, _fs.existsSync)(file)) return res.sendFile(file);
+        }
+        // 3️⃣ Serve prerendered SSG routes
+        if (this.prerenderedRoutes.has(url)) {
+            const file = (0, _path.join)(this.staticDir, url === '/' ? '' : url, 'index.html');
+            if ((0, _fs.existsSync)(file)) return res.sendFile(file);
+        }
+        // 4️⃣ SSR rendering
+        if (this.ssrHandler) {
+            try {
+                await new Promise((resolve, reject)=>{
+                    this.ssrHandler(req, res, (err)=>{
+                        if (err) reject(err);
+                        else resolve();
+                    });
+                });
+                // If SSR did not send a response, fallback to CSR
+                if (!res.headersSent) {
+                    return res.status(200).sendFile(this.indexCSR);
+                }
+                return;
+            } catch (err) {
+                this.logger.error(`SSR rendering error for "${url}"`, err);
+            }
+        }
+        // 5️⃣ CSR fallback
+        if (!res.headersSent) {
+            return res.status(200).sendFile(this.indexCSR);
+        }
+    }
+    isStatic(url) {
+        return /\.(js|mjs|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|webp)$/.test(url);
+    }
+    constructor(){
+        this.logger = new _common.Logger(SSRController.name);
+        this.staticDir = (0, _path.join)(process.cwd(), '{{{ props.staticDir }}}');
+        this.serverDir = (0, _path.join)(process.cwd(), '{{{ props.serverDir }}}');
+        this.ssrHandler = null;
+        this.prerenderedRoutes = new Map();
+        // CSR fallback
+        this.indexCSR = (0, _fs.existsSync)((0, _path.join)(this.staticDir, 'index.csr.html')) ? (0, _path.join)(this.staticDir, 'index.csr.html') : (0, _path.join)(this.staticDir, 'index.html');
+    }
+};
+_ts_decorate([
+    (0, _common.Get)('*'),
+    _ts_param(0, (0, _common.Req)()),
+    _ts_param(1, (0, _common.Res)()),
+    _ts_param(2, (0, _common.Next)()),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof Request === "undefined" ? Object : Request,
+        typeof Response === "undefined" ? Object : Response,
+        typeof NextFunction === "undefined" ? Object : NextFunction
+    ]),
+    _ts_metadata("design:returntype", Promise)
+], SSRController.prototype, "render", null);
+SSRController = _ts_decorate([
+    (0, _common.Controller)(),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [])
+], SSRController);
+
+//# sourceMappingURL=ssr.controller.js.map
