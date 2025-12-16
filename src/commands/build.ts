@@ -106,6 +106,13 @@ const buildCommand: Command = {
     const backendUtils = BuildFactory.getProject(backend.skulljs_repository);
     const frontendUtils = frontend ? BuildFactory.getProject(frontend.skulljs_repository) : undefined;
 
+    if (frontend && frontendUtils) {
+      // Build frontend
+      toolbox.loader.start(infoLoader('Building frontend'));
+      await frontendUtils.build(frontend, buildProps);
+      await toolbox.loader.succeed();
+    }
+
     const isFrontendSSR = frontend && frontendUtils ? await frontendUtils.isFrontendSSR(frontend) : false;
 
     // Build backend
@@ -124,11 +131,6 @@ const buildCommand: Command = {
     await toolbox.loader.succeed();
 
     if (frontend && frontendUtils) {
-      // Build frontend
-      toolbox.loader.start(infoLoader('Building frontend'));
-      await frontendUtils.build(frontend, buildProps);
-      await toolbox.loader.succeed();
-
       // Copying frontend to dist
       toolbox.loader.start(infoLoader('Copying frontend to dist'));
       await frontendUtils.copyFiles(frontend, output_path);
