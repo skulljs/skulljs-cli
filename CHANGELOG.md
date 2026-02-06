@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.10.0 - Add support for prisma.config.ts
+
+- Add support for prisma.config.ts
+
 ## v1.9.0 - Add support for Angular SSR
 
 - Add support for Angular SSR

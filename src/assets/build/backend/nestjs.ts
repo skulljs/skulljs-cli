@@ -107,7 +107,7 @@ export class Nestjs extends BuildUtils {
   }
   async copyFiles(repository: RepositorySkJson, output_path: string, protocol?: string): Promise<void> {
     await fileSystem.copyAsync(repository.path, output_path, {
-      matching: ['./@(.env|LICENSE|package-lock.json|package.json)', 'prisma/**/*', 'templates/**/*', 'dist/**/*'],
+      matching: ['./@(.env|LICENSE|package-lock.json|package.json|prisma.config.ts)', 'prisma/**/*', 'templates/**/*', 'dist/**/*'],
     });
     await fileSystem.renameAsync(path.join(output_path, 'dist'), 'src');
 
